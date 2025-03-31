@@ -1,21 +1,42 @@
 <!-- resources/views/reservar.blade.php -->
-@extends('layouts.welcome') {{-- Asegúrate de usar solo el nombre del archivo sin extensión --}}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Laboratorio</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{{ asset('css/app.css') }}">
 
-@section('content')
-    <h1>Laboratorio Clínico Nisii</h1>
-    <h2>Contáctenos o reserve su cita</h2>
-    <form>
-        <label>Nombre completo</label>
-        <input type="text" name="nombre" required>
 
-        <label>Seleccione fecha</label>
-        <input type="date" name="fecha" required>
 
-        <label>Contacto</label>
-        <input type="text" name="contacto" required>
+    <style>
+        
+    </style>
+</head>
+<body>
 
-        <button type="submit">Agendar cita</button>
-    </form>
-@endsection
+    <div class="login-container">
+        <h3><strong>Bienvenido</strong></h3>
+        <h4>Laboratorio Clínico Nisii</h4>
+        <div class="icon-user">
+         <img src="/img/perfil_icon.png" alt="Imagen" style="width: 100px; height: 100px;">
+        </div>
+        <form action="{{ route('login') }}" method="POST">
+            @csrf
+            <div class="mb-3 text-start">
+                <label for="usuario" class="form-label">Usuario</label>
+                <input type="text" class="form-control" id="usuario" name="usuario" required>
+            </div>
+            <div class="mb-3 text-start">
+                <label for="password" class="form-label">Contraseña</label>
+                <input type="password" class="form-control" id="password" name="password" required>
+            </div>
+            <button type="submit" class="btn btn-login w-100">Ingresar</button>
+        </form>
+    </div>
+
+</body>
+</html>
 
 
