@@ -10,31 +10,26 @@ use Illuminate\Support\Facades\Session;
 
 class AuthController extends Controller
 {
-    public function loginForm()
-    {
-        return view('auth.login');
-    }
-
     public function login(Request $request)
     {
+        // Validación de las credenciales
         $request->validate([
-            'usuario' => 'required|email',
-            'password' => 'required',
+            'email' => 'required|email',
+            'password' => 'required|min:6',
         ]);
 
-        $admin = Administrador::where('correo', $request->usuario)->first();
-
-        if ($admin && Hash::check($request->password, $admin->contraseña)) {
-            Session::put('admin', $admin);
-            return redirect()->route('dashboard'); // Redirige a la página de inicio
+        // Intentar autenticar al usuario
+        if (Auth::attempt([
+            'email' => $request->email,
+            'password' => $request->password,
+        ], $request->remember)) {
+            // Si las credenciales son correctas, redirigir a la página principal
+            return redirect()->intended('/home');  // Redirige a la página de inicio
+        } else {
+            // Si las credenciales son incorrectas, redirigir con un mensaje de error
+            return back()->withErrors([
+                'email' => 'Las credenciales no son correctas.',
+            ]);
         }
-
-        return back()->withErrors(['usuario' => 'Credenciales incorrectas']);
-    }
-
-    public function logout()
-    {
-        Session::forget('admin');
-        return redirect()->route('login');
     }
 }
