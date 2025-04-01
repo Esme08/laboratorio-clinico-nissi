@@ -7,15 +7,20 @@ use App\Http\Controllers\AuthController;
 use App\Models\Administrador;
 use Illuminate\Support\Facades\Hash;
 
+Route::get('/', function () {
+    return view('home');
+});
+
+
+Route::get('/', [ServicioController::class, 'index'])->name('home');
+
+Route::get('/agendar-cita', [CitaController::class, 'create'])->name('cita.create');
 
 Route::get('/login', [AuthController::class, 'loginForm'])->name('login');
 Route::post('/login', [AuthController::class, 'login']);
 Route::get('/logout', [AuthController::class, 'logout'])->name('logout');
 
 
-Route::get('/', function () {
-    return view('layouts.welcome');
-});
 
 // Aquí le damos el nombre a la ruta
 Route::get('/login', function () {
