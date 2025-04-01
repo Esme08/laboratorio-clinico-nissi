@@ -3,15 +3,29 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\AuthController;
+use App\Models\Administrador;
+use Illuminate\Support\Facades\Hash;
+
+
+Route::get('/login', [AuthController::class, 'loginForm'])->name('login');
+Route::post('/login', [AuthController::class, 'login']);
+Route::get('/logout', [AuthController::class, 'logout'])->name('logout');
+
 
 Route::get('/', function () {
     return view('layouts.welcome');
 });
 
-Route::get('/reservar', function () {
-    return view('reservar');
-})->name('reservar');  // Aquí le damos el nombre a la ruta
-
+// Aquí le damos el nombre a la ruta
 Route::get('/login', function () {
-    return view('auth.login'); // Asegúrate de tener esta vista
+    return view('login'); // Asegúrate de tener esta vista
 })->name('login');
+
+
+Administrador::create([
+    'nombre' => 'Admin Ejemplo',
+    'correo' => 'admin@example.com',
+    'contraseña' => Hash::make('123456'), // Encripta la contraseña
+]);
+

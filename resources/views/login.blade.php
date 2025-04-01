@@ -14,7 +14,7 @@
         
     </style>
 </head>
-<body>
+<body class="login-body">
 
     <div class="login-container">
         <h3><strong>Bienvenido</strong></h3>
@@ -26,7 +26,7 @@
             @csrf
             <div class="mb-3 text-start">
                 <label for="usuario" class="form-label">Usuario</label>
-                <input type="text" class="form-control" id="usuario" name="usuario" required>
+                <input type="email" class="form-control" id="correo" name="correo" required>
             </div>
             <div class="mb-3 text-start">
                 <label for="password" class="form-label">Contraseña</label>
