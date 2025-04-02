@@ -3,38 +3,30 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Hash;
 use App\Models\Administrador;
 
 class AuthController extends Controller
 {
-    public function showLogin()
-    {
-        return view('login');
-    }
-
     public function login(Request $request)
     {
-        $request->validate([
+        $credentials = $request->validate([
             'correo' => 'required|email',
-            'password' => 'required'
+            'contraseña' => 'required',
         ]);
 
-        $admin = Administrador::where('correo', $request->correo)->first();
+        $admin = Administrador::where('correo', $credentials['correo'])->first();
 
-        if ($admin && Hash::check($request->password, $admin->contraseña)) {
-            Auth::login($admin);
-            return redirect()->route('Administrador1'); // Redirige a la página principal
+        if ($admin && password_verify($credentials['contraseña'], $admin->contraseña)) {
+            session(['admin' => true]); // Guardamos que el usuario es admin
+            return redirect('/admin/edit-home');
         }
 
-        return back()->withErrors(['correo' => 'Credenciales incorrectas.']);
+        return back()->withErrors(['error' => 'Credenciales incorrectas']);
     }
 
     public function logout()
     {
-        Auth::logout();
-        return redirect()->route('login');
+        session()->forget('admin');
+        return redirect('/');
     }
 }
-

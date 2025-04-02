@@ -3,17 +3,29 @@
 namespace App\Models;
 
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Notifications\Notifiable;
 
 class Administrador extends Authenticatable
 {
-    protected $table = 'Administradores'; // Nombre exacto de la tabla en la BD
+    use Notifiable;
+
+    protected $table = 'Administradores';
     protected $primaryKey = 'id_admin';
-    protected $fillable = ['nombre', 'correo', 'contraseña'];
-    protected $hidden = ['contraseña'];
+
+    protected $fillable = [
+        'nombre',
+        'correo',
+        'contraseña',
+    ];
+
+    protected $hidden = [
+        'contraseña',
+    ];
 
     public function getAuthPassword()
     {
         return $this->contraseña;
     }
 }
+
 
