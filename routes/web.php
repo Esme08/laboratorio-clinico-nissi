@@ -30,19 +30,18 @@ Route::resource('clinicas', ClinicaController::class);
 Route::resource('imagenes_clinica', ImagenClinicaController::class);
 
 // Rutas de autenticación
-Route::get('/login', [AuthController::class, 'loginForm'])->name('login');
-Route::post('/login', [AuthController::class, 'login']);
-Route::get('/logout', [AuthController::class, 'logout'])->name('logout');
 
-// Ruta para la página principal (home)
-Route::get('/', function () {
-    return view('login'); // Verifica que 'auth.login' se encuentre en 'resources/views/auth/login.blade.php'
+Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
+Route::post('/login', [AuthController::class, 'login']);
+Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+
+Route::middleware(['auth'])->group(function () {
+    Route::get('/Administrador1', function () {
+        return view('Administrador1');
+    })->name('Administrador1');
+    
 });
 
-// Ruta para la página de inicio (home), protegida por middleware 'auth'
-Route::get('/home', function () {
-    return view('home');
-})->middleware('auth');
 
 // Eliminar esta parte de la creación de administrador
 // Administrador::create([
