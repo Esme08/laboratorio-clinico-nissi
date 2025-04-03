@@ -43,6 +43,6 @@ class CitaController extends Controller
             $cita->combos()->attach($request->servicio_combo);
         }
 
-        return redirect()->route('home')->with('success', 'Cita agendada correctamente.');
+        return response()->json(['success' => true]); // Devuelve una respuesta JSON de éxito
     }
 }
