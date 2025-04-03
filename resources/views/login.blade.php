@@ -20,7 +20,7 @@
         <h3><strong>Bienvenido</strong></h3>
         <h4>Laboratorio Clínico Nisii</h4>
         <div class="icon-user">
-         <img src="/img/perfil_icon.png" alt="Imagen" style="width: 100px; height: 100px;">
+         <img src="/imagenes/perfil_icon.png" alt="Imagen" style="width: 100px; height: 100px;">
         </div>
         <form action="{{ route('login') }}" method="POST">
             @csrf
