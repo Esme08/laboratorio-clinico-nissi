@@ -68,8 +68,10 @@
                             <input type="date" class="form-control" name="fecha" id="fechaCita" required>
                         </div>
                         <div class="mb-3">
-                            <label class="form-label">Hora</label>
-                            <input type="time" class="form-control" name="hora" id="horaCita" required>
+                            <label for="hora">Hora:</label>
+                            <select name="hora" id="hora" required class="form-control">
+                                <option value="">Selecciona una fecha primero</option>
+                            </select>
                         </div>
                         <div class="mb-3">
                             <label class="form-label">Selecciona los Servicios</label>
@@ -99,76 +101,121 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        const serviciosSelect = document.getElementById('serviciosSelect');
-        const precioTotalInput = document.getElementById('precioTotal');
-        const fechaCita = document.getElementById('fechaCita');
-        const horaCita = document.getElementById('horaCita');
+    const serviciosSelect = document.getElementById('serviciosSelect');
+    const precioTotalInput = document.getElementById('precioTotal');
+    const fechaCita = document.getElementById('fechaCita');
+    const horaSelect = document.getElementById('hora');
 
-        serviciosSelect.addEventListener('change', function() {
-            let precioTotal = 0;
-            for (let option of serviciosSelect.selectedOptions) {
-                precioTotal += parseFloat(option.dataset.precio);
-            }
-            precioTotalInput.value = precioTotal.toFixed(2);
-        });
+    serviciosSelect.addEventListener('change', function() {
+        let precioTotal = 0;
+        for (let option of serviciosSelect.selectedOptions) {
+            precioTotal += parseFloat(option.dataset.precio);
+        }
+        precioTotalInput.value = precioTotal.toFixed(2);
+    });
 
-        fechaCita.addEventListener('change', function() {
-            const diaSemana = new Date(this.value).getDay();
-            if (diaSemana === 6) { //Domingo
-                alert('No se pueden agendar citas los domingos.');
+    fechaCita.addEventListener('change', function () {
+        const diaSemana = new Date(this.value).getDay();
+        if (diaSemana === 6) {
+            alert('No se pueden agendar citas los domingos.');
+            this.value = '';
+            return;
+        }
+
+        if (this.value) {
+            fetch(`/horas-disponibles?fecha=${this.value}`)
+                .then(response => response.json())
+                .then(horas => {
+                    horaSelect.innerHTML = '';
+                    if (horas.length === 0) {
+                        horaSelect.innerHTML = '<option value="">No hay horas disponibles</option>';
+                    } else {
+                        horaSelect.innerHTML = '<option value="">Selecciona una hora</option>';
+                        horas.forEach(hora => {
+                            const option = document.createElement('option');
+                            option.value = hora;
+                            option.textContent = hora;
+                            horaSelect.appendChild(option);
+                        });
+                    }
+                })
+                .catch(error => {
+                    console.error('Error al obtener horas disponibles:', error);
+                });
+        }
+    });
+
+    // Aquí va tu script integrado
+    horaSelect.addEventListener('change', function() {
+        const diaSemana = new Date(fechaCita.value).getDay();
+        const hora = parseInt(this.value.split(':')[0]);
+        if (diaSemana === 5) { // Sábado
+            if (hora < 7 || hora >= 12) {
+                alert('Los sábados solo se pueden agendar citas de 7:00 AM a 12:00 PM.');
                 this.value = '';
             }
-        });
-
-        horaCita.addEventListener('change', function() {
-            const diaSemana = new Date(fechaCita.value).getDay();
-            const hora = parseInt(this.value.split(':')[0]);
-            if (diaSemana === 5) { // Sábado
-                if (hora < 7 || hora >= 12) {
-                    alert('Los sábados solo se pueden agendar citas de 7:00 AM a 12:00 PM.');
-                    this.value = '';
-                }
-            } else { // Otros días
-                if (hora < 7 || hora >= 16) {
-                    alert('Las citas solo se pueden agendar de 7:00 AM a 4:00 PM.');
-                    this.value = '';
-                }
+        } else if (diaSemana !== 0) { // Lunes a viernes
+            if (hora < 7 || hora >= 16) {
+                alert('Las citas solo se pueden agendar de 7:00 AM a 4:00 PM.');
+                this.value = '';
             }
-        });
+        }
+    });
 
-        document.getElementById("formCita").addEventListener("submit", function(event) {
-            event.preventDefault();
+    document.getElementById("formCita").addEventListener("submit", function(event) {
+        event.preventDefault();
 
-            const form = event.target;
-            const formData = new FormData(form);
-            const submitBtn = document.getElementById('submitBtn');
-            const mensajeDiv = document.getElementById('mensaje');
+        const form = event.target;
+        const formData = new FormData(form);
+        const submitBtn = document.getElementById('submitBtn');
+        const mensajeDiv = document.getElementById('mensaje');
 
-            submitBtn.disabled = true;
+        submitBtn.disabled = true;
 
-            fetch(form.action, {
-                method: 'POST',
-                body: formData,
-                headers: {
-                    'X-CSRF-TOKEN': formData.get('_token')
-                }
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    mensajeDiv.innerHTML = '<div class="alert alert-success">Cita agendada correctamente.</div>';
-                    form.reset();
-                } else {
-                    mensajeDiv.innerHTML = '<div class="alert alert-danger">Error al agendar la cita: ' + (data.message || 'Error desconocido.') + '</div>';
-                }
-            })
-            .catch(error => {
-                mensajeDiv.innerHTML = '<div class="alert alert-danger">Error al agendar la cita: ' + (error.message || 'Error desconocido.') + '</div>';
-            })
-            .finally(() => {
+        fetch('/verificar-hora-cita', {
+            method: 'POST',
+            body: formData,
+            headers: {
+                'X-CSRF-TOKEN': formData.get('_token')
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.ocupada) {
+                mensajeDiv.innerHTML = '<div class="alert alert-danger">La hora seleccionada ya está ocupada. Por favor, elige otra hora.</div>';
                 submitBtn.disabled = false;
-            });
+            } else {
+                fetch(form.action, {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        'X-CSRF-TOKEN': formData.get('_token')
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        mensajeDiv.innerHTML = '<div class="alert alert-success">Cita agendada correctamente.</div>';
+                        form.reset();
+                        horaSelect.innerHTML = '<option value="">Selecciona una fecha primero</option>';
+                    } else {
+                        mensajeDiv.innerHTML = '<div class="alert alert-danger">Error al agendar la cita: ' + (data.message || 'Error desconocido.') + '</div>';
+                    }
+                })
+                .catch(error => {
+                    mensajeDiv.innerHTML = '<div class="alert alert-danger">Error al agendar la cita: ' + (error.message || 'Error desconocido.') + '</div>';
+                })
+                .finally(() => {
+                    submitBtn.disabled = false;
+                });
+            }
+        })
+        .catch(error => {
+            mensajeDiv.innerHTML = '<div class="alert alert-danger">Error al verificar la hora de la cita.</div>';
+            submitBtn.disabled = false;
         });
-    </script>
+    });
+</script>
+
 </body>
 </html>
