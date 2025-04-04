@@ -22,17 +22,21 @@
         <div class="icon-user">
          <img src="/imagenes/perfil_icon.png" alt="Imagen" style="width: 100px; height: 100px;">
         </div>
-        <form action="{{ route('login') }}" method="POST">
+        <form action="{{ route('create.admin') }}" method="POST">
             @csrf
             <div class="mb-3 text-start">
-                <label for="usuario" class="form-label">Usuario</label>
+                <label for="nombre" class="form-label">Usuario</label>
+                <input type="text" class="form-control" id="nombre" name="nombre" required>
+            </div>
+            <div class="mb-3 text-start">
+                <label for="correo" class="form-label">Correo</label>
                 <input type="email" class="form-control" id="correo" name="correo" required>
             </div>
             <div class="mb-3 text-start">
                 <label for="password" class="form-label">Contraseña</label>
                 <input type="password" class="form-control" id="password" name="password" required>
             </div>
-            <button type="submit" class="btn btn-login w-100">Ingresar</button>
+            <button type="submit" class="btn btn-login w-100">Crear usuario</button>
         </form>
     </div>
 
