@@ -6,31 +6,39 @@
     <title>Agendar Cita</title>
     <link href="https://fonts.googleapis.com/css2?family=Lora:wght@400;700&display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Lora', serif;
+        }
+
+        .form-label .text-danger {
+            font-size: 0.8em;
+        }
+
+        .accordion-button:not(.collapsed) {
+            color: #000;
+            background-color: #e9ecef;
+        }
+
+        .accordion-button:focus {
+            border-color: #86b7fe;
+            box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+        }
+
+        footer {
+            padding: 20px;
+            text-align: center;
+            font-size: 14px;
+        }
+    </style>
 </head>
-<style>
-    body {
-        font-family: 'Lora', serif;
-    }
-    footer {
-        padding: 10px;
-        text-align: center;
-        font-size: 14px;
-    }
-</style>
 <body class="bg-light">
     <nav class="navbar navbar-expand-lg " style="background-color: #b5e8c3;">
-        <div class="container-fluid">
-            <a class="navbar-brand" href="#">
-                <img src="{{ asset('imagenes/farmacia.png') }}" alt="Logo" width="40" height="40" class="d-inline-block align-text-top">
-                Laboratorio Clinico Nissi</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-        </div>
         <div class="container">
             <a class="navbar-brand" href="#">
                 <img src="{{ asset('imagenes/farmacia.png') }}" alt="Logo" width="40" height="40" class="d-inline-block align-text-top">
-                Laboratorio Clinico Nissi</a>
+                Laboratorio Clinico Nissi
+            </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
@@ -46,48 +54,74 @@
 
     <div class="container mt-5">
         <div class="row justify-content-center">
-            <div class="col-md-6">
+            <div class="col-md-8">
                 <div class="card p-4">
-                    <h3 class="text-center">Agendar una Cita</h3>
+                    <h3 class="text-center mb-4">Agendar una Cita</h3>
                     <form id="formCita" action="{{ route('cita.store') }}" method="POST">
                         @csrf
                         <div class="mb-3">
-                            <label class="form-label">Nombre Completo</label>
-                            <input type="text" class="form-control" name="nombre" required>
+                            <label for="nombre" class="form-label">Nombre Completo <span class="text-muted">(Opcional)</span></label>
+                            <input type="text" class="form-control" id="nombre" name="nombre">
+                            <div class="form-text">Ingresa tu nombre si deseas que te contactemos directamente.</div>
                         </div>
                         <div class="mb-3">
-                            <label class="form-label">Correo Electrónico</label>
-                            <input type="email" class="form-control" name="correo" required>
+                            <label for="fechaCita" class="form-label">Fecha de la Cita <span class="text-danger">*</span></label>
+                            <input type="date" class="form-control" id="fechaCita" name="fecha" required>
+                            <div class="form-text">Selecciona el día que deseas tu cita. No atendemos los domingos.</div>
                         </div>
                         <div class="mb-3">
-                            <label class="form-label">Teléfono</label>
-                            <input type="tel" class="form-control" name="telefono" pattern="[0-9]{8,}" required>
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label">Fecha</label>
-                            <input type="date" class="form-control" name="fecha" id="fechaCita" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="hora">Hora:</label>
+                            <label for="hora" class="form-label">Hora de la Cita <span class="text-danger">*</span></label>
                             <select name="hora" id="hora" required class="form-control">
                                 <option value="">Selecciona una fecha primero</option>
                             </select>
+                            <div class="form-text">Selecciona la hora en la que te gustaría tu cita.</div>
+                        </div>
+
+                        <div class="accordion mb-3" id="serviciosAccordion">
+                            <div class="accordion-item">
+                                <h2 class="accordion-header" id="headingServicios">
+                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseServicios" aria-expanded="false" aria-controls="collapseServicios">
+                                        Seleccionar Servicios <span class="text-danger">*</span>
+                                    </button>
+                                </h2>
+                                <div id="collapseServicios" class="accordion-collapse collapse" aria-labelledby="headingServicios" data-bs-parent="#serviciosAccordion">
+                                    <div class="accordion-body">
+                                        <div class="mb-3">
+                                            <label class="form-label">Servicios Disponibles:</label>
+                                            <div id="servicios-lista">
+                                                @foreach($servicios as $servicio)
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="checkbox" name="servicios[]" value="{{ $servicio->id_servicio }}" id="servicio{{ $servicio->id_servicio }}" data-precio="{{ $servicio->precio }}">
+                                                    <label class="form-check-label" for="servicio{{ $servicio->id_servicio }}">
+                                                        {{ $servicio->nombre }} - ${{ $servicio->precio }}
+                                                    </label>
+                                                </div>
+                                                @endforeach
+                                            </div>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label">Precio Total Estimado</label>
+                                            <input type="text" class="form-control" id="precioTotal" name="precio_total" value="$0.00" readonly>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="correo" class="form-label">Correo Electrónico <span class="text-muted">(Opcional)</span></label>
+                            <input type="email" class="form-control" id="correo" name="correo">
+                            <div class="form-text">Ingresa tu correo si deseas recibir una confirmación de tu cita.</div>
                         </div>
                         <div class="mb-3">
-                            <label class="form-label">Selecciona los Servicios</label>
-                            <select class="form-select" name="servicios[]" multiple required id="serviciosSelect">
-                                @foreach($servicios as $servicio)
-                                    <option value="{{ $servicio->id_servicio }}" data-precio="{{ $servicio->precio }}">{{ $servicio->nombre }} - ${{ $servicio->precio }}</option>
-                                @endforeach
-                            </select>
+                            <label for="telefono" class="form-label">Número de Teléfono <span class="text-muted">(Opcional)</span></label>
+                            <input type="tel" class="form-control" id="telefono" name="telefono" pattern="[0-9]{8,}">
+                            <div class="form-text">Ingresa tu número de teléfono para que podamos contactarte si es necesario.</div>
                         </div>
-                        <div class="mb-3">
-                            <label class="form-label">Precio Total</label>
-                            <input type="text" class="form-control" id="precioTotal" name="precio_total" readonly>
-                        </div>
+
                         <button id="submitBtn" type="submit" class="btn btn-dark w-100">Agendar Cita</button>
+                        <div id="mensaje" class="mt-3 text-center"></div>
                     </form>
-                    <div id="mensaje" class="mt-3 text-center"></div>
                 </div>
             </div>
         </div>
@@ -101,91 +135,93 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-    const serviciosSelect = document.getElementById('serviciosSelect');
-    const precioTotalInput = document.getElementById('precioTotal');
-    const fechaCita = document.getElementById('fechaCita');
-    const horaSelect = document.getElementById('hora');
+        document.addEventListener('DOMContentLoaded', function() {
+            const serviciosLista = document.getElementById('servicios-lista');
+            const precioTotalInput = document.getElementById('precioTotal');
+            const fechaCita = document.getElementById('fechaCita');
+            const horaSelect = document.getElementById('hora');
+            const formCita = document.getElementById('formCita');
+            const submitBtn = document.getElementById('submitBtn');
+            const mensajeDiv = document.getElementById('mensaje');
+            const serviciosCheckboxes = serviciosLista.querySelectorAll('input[type="checkbox"]');
 
-    serviciosSelect.addEventListener('change', function() {
-        let precioTotal = 0;
-        for (let option of serviciosSelect.selectedOptions) {
-            precioTotal += parseFloat(option.dataset.precio);
-        }
-        precioTotalInput.value = precioTotal.toFixed(2);
-    });
-
-    fechaCita.addEventListener('change', function () {
-        const diaSemana = new Date(this.value).getDay();
-        if (diaSemana === 6) {
-            alert('No se pueden agendar citas los domingos.');
-            this.value = '';
-            return;
-        }
-
-        if (this.value) {
-            fetch(`/horas-disponibles?fecha=${this.value}`)
-                .then(response => response.json())
-                .then(horas => {
-                    horaSelect.innerHTML = '';
-                    if (horas.length === 0) {
-                        horaSelect.innerHTML = '<option value="">No hay horas disponibles</option>';
-                    } else {
-                        horaSelect.innerHTML = '<option value="">Selecciona una hora</option>';
-                        horas.forEach(hora => {
-                            const option = document.createElement('option');
-                            option.value = hora;
-                            option.textContent = hora;
-                            horaSelect.appendChild(option);
-                        });
+            function actualizarPrecioTotal() {
+                let precioTotal = 0;
+                serviciosCheckboxes.forEach(checkbox => {
+                    if (checkbox.checked) {
+                        precioTotal += parseFloat(checkbox.dataset.precio);
                     }
-                })
-                .catch(error => {
-                    console.error('Error al obtener horas disponibles:', error);
                 });
-        }
-    });
-
-    // Aquí va tu script integrado
-    horaSelect.addEventListener('change', function() {
-        const diaSemana = new Date(fechaCita.value).getDay();
-        const hora = parseInt(this.value.split(':')[0]);
-        if (diaSemana === 5) { // Sábado
-            if (hora < 7 || hora >= 12) {
-                alert('Los sábados solo se pueden agendar citas de 7:00 AM a 12:00 PM.');
-                this.value = '';
+                precioTotalInput.value = `$${precioTotal.toFixed(2)}`;
             }
-        } else if (diaSemana !== 0) { // Lunes a viernes
-            if (hora < 7 || hora >= 16) {
-                alert('Las citas solo se pueden agendar de 7:00 AM a 4:00 PM.');
-                this.value = '';
-            }
-        }
-    });
 
-    document.getElementById("formCita").addEventListener("submit", function(event) {
-        event.preventDefault();
+            serviciosCheckboxes.forEach(checkbox => {
+                checkbox.addEventListener('change', actualizarPrecioTotal);
+            });
 
-        const form = event.target;
-        const formData = new FormData(form);
-        const submitBtn = document.getElementById('submitBtn');
-        const mensajeDiv = document.getElementById('mensaje');
+            fechaCita.addEventListener('change', function () {
+                const diaSemana = new Date(this.value).getDay();
+                if (diaSemana === 6) { // Domingo es 0
+                    alert('No se pueden agendar citas los domingos.');
+                    this.value = '';
+                    horaSelect.innerHTML = '<option value="">Selecciona una fecha primero</option>';
+                    return;
+                }
 
-        submitBtn.disabled = true;
+                if (this.value) {
+                    fetch(`/horas-disponibles?fecha=${this.value}`)
+                        .then(response => response.json())
+                        .then(horas => {
+                            horaSelect.innerHTML = '';
+                            if (horas.length === 0) {
+                                horaSelect.innerHTML = '<option value="">No hay horas disponibles para este día</option>';
+                            } else {
+                                horaSelect.innerHTML = '<option value="">Selecciona una hora</option>';
+                                horas.forEach(hora => {
+                                    const option = document.createElement('option');
+                                    option.value = hora;
+                                    option.textContent = hora;
+                                    horaSelect.appendChild(option);
+                                });
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error al obtener horas disponibles:', error);
+                            horaSelect.innerHTML = '<option value="">Error al cargar las horas</option>';
+                        });
+                } else {
+                    horaSelect.innerHTML = '<option value="">Selecciona una fecha primero</option>';
+                }
+            });
 
-        fetch('/verificar-hora-cita', {
-            method: 'POST',
-            body: formData,
-            headers: {
-                'X-CSRF-TOKEN': formData.get('_token')
-            }
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.ocupada) {
-                mensajeDiv.innerHTML = '<div class="alert alert-danger">La hora seleccionada ya está ocupada. Por favor, elige otra hora.</div>';
-                submitBtn.disabled = false;
-            } else {
-                fetch(form.action, {
+            horaSelect.addEventListener('change', function() {
+                const fechaSeleccionada = fechaCita.value;
+                if (!fechaSeleccionada) return;
+
+                const diaSemana = new Date(fechaSeleccionada).getDay();
+                const hora = parseInt(this.value.split(':')[0]);
+
+                if (diaSemana === 5) { // Sábado es 6
+                    if (hora < 7 || hora >= 12) {
+                        alert('Los sábados solo se pueden agendar citas de 7:00 AM a 12:00 PM.');
+                        this.value = '';
+                    }
+                } else if (diaSemana !== 0) { // Lunes a viernes (0 es domingo)
+                    if (hora < 7 || hora >= 16) {
+                        alert('Las citas solo se pueden agendar de 7:00 AM a 4:00 PM.');
+                        this.value = '';
+                    }
+                }
+            });
+
+            formCita.addEventListener("submit", function(event) {
+                event.preventDefault();
+
+                const formData = new FormData(formCita);
+                submitBtn.disabled = true;
+                mensajeDiv.innerHTML = ''; // Limpiar mensajes previos
+
+                fetch('/verificar-hora-cita', {
                     method: 'POST',
                     body: formData,
                     headers: {
@@ -194,28 +230,44 @@
                 })
                 .then(response => response.json())
                 .then(data => {
-                    if (data.success) {
-                        mensajeDiv.innerHTML = '<div class="alert alert-success">Cita agendada correctamente.</div>';
-                        form.reset();
-                        horaSelect.innerHTML = '<option value="">Selecciona una fecha primero</option>';
+                    if (data.ocupada) {
+                        mensajeDiv.innerHTML = '<div class="alert alert-danger">La hora seleccionada ya está ocupada. Por favor, elige otra hora.</div>';
+                        submitBtn.disabled = false;
                     } else {
-                        mensajeDiv.innerHTML = '<div class="alert alert-danger">Error al agendar la cita: ' + (data.message || 'Error desconocido.') + '</div>';
+                        fetch(formCita.action, {
+                            method: 'POST',
+                            body: formData,
+                            headers: {
+                                'X-CSRF-TOKEN': formData.get('_token')
+                            }
+                        })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.success) {
+                                mensajeDiv.innerHTML = '<div class="alert alert-success">Cita agendada correctamente.</div>';
+                                formCita.reset();
+                                precioTotalInput.value = '$0.00';
+                                horaSelect.innerHTML = '<option value="">Selecciona una fecha primero</option>';
+                                serviciosCheckboxes.forEach(cb => cb.checked = false);
+                            } else {
+                                mensajeDiv.innerHTML = '<div class="alert alert-danger">Error al agendar la cita: ' + (data.message || 'Error desconocido.') + '</div>';
+                            }
+                        })
+                        .catch(error => {
+                            mensajeDiv.innerHTML = '<div class="alert alert-danger">Error al agendar la cita: ' + (error.message || 'Error desconocido.') + '</div>';
+                        })
+                        .finally(() => {
+                            submitBtn.disabled = false;
+                        });
                     }
                 })
                 .catch(error => {
-                    mensajeDiv.innerHTML = '<div class="alert alert-danger">Error al agendar la cita: ' + (error.message || 'Error desconocido.') + '</div>';
-                })
-                .finally(() => {
+                    mensajeDiv.innerHTML = '<div class="alert alert-danger">Error al verificar la hora de la cita.</div>';
                     submitBtn.disabled = false;
                 });
-            }
-        })
-        .catch(error => {
-            mensajeDiv.innerHTML = '<div class="alert alert-danger">Error al verificar la hora de la cita.</div>';
-            submitBtn.disabled = false;
+            });
         });
-    });
-</script>
+    </script>
 
 </body>
 </html>
