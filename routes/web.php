@@ -5,11 +5,9 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ServicioController;
 use App\Http\Controllers\CitaController;
 
-// web.php
 Route::post('/verificar-hora-cita', [CitaController::class, 'verificarHoraCita']);
 Route::get('/agendar-cita', [CitaController::class, 'create'])->name('cita.create');
 Route::get('/horas-disponibles', [CitaController::class, 'obtenerHorasDisponibles']);
-
 
 Route::get('/', [ServicioController::class, 'index'])->name('home');
 

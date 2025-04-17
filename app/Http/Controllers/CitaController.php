@@ -3,9 +3,10 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB; // ✅ Agregado
+use Illuminate\Support\Facades\DB;
 use App\Models\Cita;
 use App\Models\Servicio;
+use Illuminate\Support\Facades\Log; // Importa la clase Log
 
 class CitaController extends Controller
 {
@@ -16,111 +17,98 @@ class CitaController extends Controller
     }
 
     public function obtenerHorasDisponibles(Request $request)
-{
-    $request->validate([
-        'fecha' => 'required|date',
-    ]);
+    {
+        $request->validate([
+            'fecha' => 'required|date',
+        ]);
 
-    $fecha = $request->fecha;
+        $fecha = $request->fecha;
 
-    // Horario base: 08:00 a 17:00, cada 30 min
-    $inicio = strtotime('07:00');
-    $fin = strtotime('16:00');
-    $intervalo = 30 * 60; // 30 minutos en segundos
+        $inicio = strtotime('07:00');
+        $fin = strtotime('16:00');
+        $intervalo = 30 * 60;
 
-    $horas = [];
-    for ($hora = $inicio; $hora <= $fin; $hora += $intervalo) {
-        $horas[] = date('H:i', $hora);
+        $horas = [];
+        for ($hora = $inicio; $hora <= $fin; $hora += $intervalo) {
+            $horas[] = date('H:i', $hora);
+        }
+
+        $ocupadas = DB::table('citas')
+            ->where('fecha', $fecha)
+            ->pluck('hora')
+            ->toArray();
+
+        $disponibles = array_filter($horas, function ($h) use ($ocupadas) {
+            return !in_array($h, $ocupadas);
+        });
+
+        return response()->json(array_values($disponibles));
     }
-
-    // Obtener las horas ocupadas de la base de datos
-    $ocupadas = DB::table('citas')
-        ->where('fecha', $fecha)
-        ->pluck('hora')
-        ->toArray();
-
-    // Filtrar las horas disponibles
-    $disponibles = array_filter($horas, function ($h) use ($ocupadas) {
-        return !in_array($h, $ocupadas);
-    });
-
-    return response()->json(array_values($disponibles));
-}
-
 
     public function verificarHoraCita(Request $request)
     {
         try {
             $request->validate([
                 'fecha' => 'required|date',
-                'hora' => 'required|date_format:H:i', // ✅ Validación estricta
+                'hora' => 'required|date_format:H:i',
             ]);
 
             $fecha = $request->fecha;
             $hora = $request->hora;
 
-            \Log::info('Verificando hora de cita: Fecha=' . $fecha . ', Hora=' . $hora);
+            Log::info('Verificando hora de cita: Fecha=' . $fecha . ', Hora=' . $hora);
 
-            $citaExistente = DB::table('citas') // ✅ Nombre de tabla en minúsculas
+            $citaExistente = DB::table('citas')
                 ->where('fecha', $fecha)
                 ->where('hora', $hora)
                 ->exists();
 
-            \Log::info('Resultado de la consulta: ' . ($citaExistente ? 'Hora ocupada' : 'Hora disponible'));
+            Log::info('Resultado de la consulta: ' . ($citaExistente ? 'Hora ocupada' : 'Hora disponible'));
 
             return response()->json(['ocupada' => $citaExistente]);
 
         } catch (\Illuminate\Validation\ValidationException $e) {
-            \Log::error('Error de validación: ' . $e->getMessage());
+            Log::error('Error de validación: ' . $e->getMessage());
             return response()->json(['error' => 'Error de validación', 'details' => $e->errors()], 422);
         } catch (\Exception $e) {
-            \Log::error('Error al verificar hora de cita: ' . $e->getMessage());
+            Log::error('Error al verificar hora de cita: ' . $e->getMessage());
             return response()->json(['error' => 'Error interno del servidor'], 500);
         }
     }
 
     public function store(Request $request)
-{
-    try {
+    {
         $request->validate([
-            'nombre' => 'required',
-            'correo' => 'required|email',
-            'telefono' => 'required|numeric|digits_between:8,15',
-            'fecha' => 'required|date',
-            'hora' => 'required|date_format:H:i', // Valida el formato de la hora
-            'servicios' => 'required|array|min:1',
-            'servicios.*' => 'exists:Servicios,id_servicio', // Valida que cada ID de servicio exista
+            'nombre' => 'nullable|string',
+            'correo' => 'nullable|email',
+            'telefono' => 'nullable|numeric|digits_between:8,15',
+            'servicios' => 'required|array',
+            'servicios.*' => 'exists:servicios,id',
             'precio_total' => 'required|numeric|min:0',
+            'fecha' => 'required|date', // Asegúrate de validar la fecha aquí también
+            'hora' => 'required|date_format:H:i', // Asegúrate de validar la hora aquí también
         ]);
 
+        dd($request->all()); // Ver los datos que llegan
+
         $cita = new Cita();
-        $cita->nombre_cliente = $request->nombre;
-        $cita->correo_cliente = $request->correo;
-        $cita->telefono_cliente = $request->telefono;
+        $cita->nombre = $request->nombre;
+        $cita->correo = $request->correo;
+        $cita->telefono = $request->telefono;
         $cita->fecha = $request->fecha;
         $cita->hora = $request->hora;
-        $cita->estado = 'Pendiente';
         $cita->precio_total = $request->precio_total;
+
+        dd($cita); // Ver el objeto cita antes de guardar
+
         $cita->save();
 
-        $serviciosNombres = [];
+        dd('Cita guardada'); // Verificar si se llega hasta aquí
+
         foreach ($request->servicios as $servicioId) {
-            $servicio = Servicio::find($servicioId);
-            if ($servicio) {
-                $serviciosNombres[] = $servicio->nombre;
-                $cita->servicios()->attach($servicioId, ['precio_servicio' => $servicio->precio]);
-            }
+            $cita->servicios()->attach($servicioId);
         }
 
-        $cita->servicios_seleccionados = json_encode($serviciosNombres);
-        $cita->save();
-
-        return response()->json(['success' => true]);
-
-    } catch (\Illuminate\Validation\ValidationException $e) {
-        return response()->json(['success' => false, 'errors' => $e->errors()], 422); // Devuelve los errores de validación
-    } catch (\Exception $e) {
-        return response()->json(['success' => false, 'message' => $e->getMessage()], 500);
+        return response()->json(['success' => true, 'message' => 'Cita agendada correctamente.']);
     }
-}
 }

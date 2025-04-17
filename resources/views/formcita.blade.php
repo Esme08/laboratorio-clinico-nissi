@@ -90,18 +90,19 @@
                                             <label class="form-label">Servicios Disponibles:</label>
                                             <div id="servicios-lista">
                                                 @foreach($servicios as $servicio)
-                                                <div class="form-check">
-                                                    <input class="form-check-input" type="checkbox" name="servicios[]" value="{{ $servicio->id_servicio }}" id="servicio{{ $servicio->id_servicio }}" data-precio="{{ $servicio->precio }}">
-                                                    <label class="form-check-label" for="servicio{{ $servicio->id_servicio }}">
-                                                        {{ $servicio->nombre }} - ${{ $servicio->precio }}
-                                                    </label>
-                                                </div>
+                                                    <div class="form-check">
+                                                        <input class="form-check-input" type="checkbox" name="servicios[]" value="{{ $servicio->id_servicio }}" id="servicio{{ $servicio->id_servicio }}" data-precio="{{ $servicio->precio }}">
+                                                        <label class="form-check-label" for="servicio{{ $servicio->id_servicio }}">
+                                                            {{ $servicio->nombre }} - ${{ number_format($servicio->precio, 2) }}
+                                                        </label>
+                                                    </div>
                                                 @endforeach
                                             </div>
                                         </div>
                                         <div class="mb-3">
                                             <label class="form-label">Precio Total Estimado</label>
-                                            <input type="text" class="form-control" id="precioTotal" name="precio_total" value="$0.00" readonly>
+                                            <input type="text" class="form-control" id="precioTotal" name="precio_total_visual" value="$0.00" readonly>
+                                            <input type="hidden" name="precio_total" id="precioTotalReal" value="0.00">
                                         </div>
                                     </div>
                                 </div>
@@ -138,6 +139,7 @@
         document.addEventListener('DOMContentLoaded', function() {
             const serviciosLista = document.getElementById('servicios-lista');
             const precioTotalInput = document.getElementById('precioTotal');
+            const precioTotalRealInput = document.getElementById('precioTotalReal');
             const fechaCita = document.getElementById('fechaCita');
             const horaSelect = document.getElementById('hora');
             const formCita = document.getElementById('formCita');
@@ -153,6 +155,7 @@
                     }
                 });
                 precioTotalInput.value = `$${precioTotal.toFixed(2)}`;
+                precioTotalRealInput.value = precioTotal.toFixed(2);
             }
 
             serviciosCheckboxes.forEach(checkbox => {
@@ -161,7 +164,7 @@
 
             fechaCita.addEventListener('change', function () {
                 const diaSemana = new Date(this.value).getDay();
-                if (diaSemana === 6) { // Domingo es 0
+                if (diaSemana === 0) { // Domingo es 0
                     alert('No se pueden agendar citas los domingos.');
                     this.value = '';
                     horaSelect.innerHTML = '<option value="">Selecciona una fecha primero</option>';
@@ -201,7 +204,7 @@
                 const diaSemana = new Date(fechaSeleccionada).getDay();
                 const hora = parseInt(this.value.split(':')[0]);
 
-                if (diaSemana === 5) { // Sábado es 6
+                if (diaSemana === 6) { // Sábado es 6
                     if (hora < 7 || hora >= 12) {
                         alert('Los sábados solo se pueden agendar citas de 7:00 AM a 12:00 PM.');
                         this.value = '';
@@ -247,6 +250,7 @@
                                 mensajeDiv.innerHTML = '<div class="alert alert-success">Cita agendada correctamente.</div>';
                                 formCita.reset();
                                 precioTotalInput.value = '$0.00';
+                                precioTotalRealInput.value = '0.00';
                                 horaSelect.innerHTML = '<option value="">Selecciona una fecha primero</option>';
                                 serviciosCheckboxes.forEach(cb => cb.checked = false);
                             } else {
@@ -268,6 +272,4 @@
             });
         });
     </script>
-
-</body>
-</html>
+    
