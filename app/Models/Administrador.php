@@ -20,6 +20,7 @@ class Administrador extends Authenticatable
         'nombre',
         'correo',
         'contraseña',
+        'estado'
     ];
 
     public $timestamps = false; // Desactivar timestamps

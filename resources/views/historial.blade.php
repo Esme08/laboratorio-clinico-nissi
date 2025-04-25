@@ -36,16 +36,20 @@
     <div class="container">
         <div class="text-center mt-4">
             <h1 >Bienvenido a Laboratorio Clinico Nissi</h1>
-            <h2>Dashboard</h2>
+            <h2>Historial</h2>
         </div>
         <div>
             <h3>Lista de Citas</h3>
-            <form id="form-citas" action="{{ route('dashboard') }}" method="GET">
+            <form id="form-citas" action="{{ route('historial.citas') }}" method="GET">
                 @csrf
             <select name="tiempo" id="tiempo">
-                <option value="Ayer" {{ request('tiempo') == 'Ayer' ? 'selected' : '' }}>Citas de Ayer</option>
-                <option value="Hoy" {{ request('tiempo') == 'Hoy' ? 'selected' : '' }}>Citas de hoy</option>
-                <option value="Manana" {{ request('tiempo') == 'Manana' ? 'selected' : '' }}>Citas de mañana</option>
+                <option value="7dias" {{ request('tiempo') == '7dias' ? 'selected' : '' }}>7 Dias</option>
+                <option value="1mes" {{ request('tiempo') == '1mes' ? 'selected' : '' }}>1 Mes</option>
+                <option value="3meses" {{ request('tiempo') == '3meses' ? 'selected' : '' }}>3 Meses</option>
+                <option value="6meses" {{ request('tiempo') == '6meses' ? 'selected' : '' }}>6 meses</option>
+                <option value="1anio" {{ request('tiempo') == '1anio' ? 'selected' : '' }}>1 Año</option>
+                <option value="todo" {{ request('tiempo') == 'todo' ? 'selected' : '' }}>Todo</option>
+
             </select>
             <button type="submit">Buscar</button>
             </form>
@@ -61,7 +65,6 @@
                         <th scope="col">Fecha</th>
                         <th scope="col">Hora</th>
                         <th scope="col">Estado</th>
-                        <th scope="col">Acciones</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -74,80 +77,28 @@
                         <td>{{ $cita->fecha }}</td>
                         <td>{{ $cita->hora }}</td>
                         <td>{{ $cita->estado }}</td>
-                        <td>
-                            <button type="button" class="btn btn-primary btn-subir" data-bs-toggle="modal" data-bs-target="#uploadModal">
-                                Subir Archivo
-                            </button>
-                        </td>
-                    </tr>
-                    <tr class="detalle" style="display: none;">
-                        <td colspan="8">
-                            <div class="d-flex justify-content-between">
-                                <div>
-                                    <strong>Detalles de la Cita:</strong>
-                                    <p><strong>Nombre:</strong> {{ $cita->nombre_cliente }}</p>
-                                    <p><strong>Correo:</strong> {{ $cita->correo_cliente }}</p>
-                                    <p><strong>Telefono:</strong> {{ $cita->telefono_cliente }}</p>
-                                    <p><strong>Fecha:</strong> {{ $cita->fecha }}</p>
-                                    <p><strong>Hora:</strong> {{ $cita->hora }}</p>
-                                    <p><strong>Estado:</strong> {{ $cita->estado }}</p>
-                                    <p><strong>Servicios Seleccionados:</strong></p>
-                                    <ul>
-                                        @foreach (json_decode($cita->servicios_seleccionados, true) as $servicio)
-                                            <li>{{ $servicio }}</li>
-                                        @endforeach
-                                    </ul>
-                                    <p><strong>Total:</strong> {{ $cita->precio_total}}</p>
-                                </div>
-                            </div>
-                        </td>
                     </tr>
                         @empty
                             <tr>
-                             <td colspan="8" class="text-center">No hay citas para el filtro seleccionado.</td>
+                             <td colspan="7" class="text-center">No hay citas para el filtro seleccionado.</td>
                             </tr>
                         @endforelse
                         <tr>
-                            <td colspan="8">
+                        <tr>
+                            <td colspan="7">
                                 <div class="d-flex justify-content-center">
                                     {{ $citas->links('pagination::bootstrap-4') }}
                                 </div>
                             </td>
                         </tr>
+                    </tr>
                 </tbody>
             </table>
 
         </div>
     </div>
-    <div class="modal fade" id="uploadModal" tabindex="-1" aria-labelledby="uploadModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="uploadModalLabel">Subir Archivo</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <form id="uploadForm" action="{{route('send.email')}}" enctype="multipart/form-data" method="post">
-                    @csrf
-                    <!-- Campo para ingresar el correo del paciente -->
-                    <div class="mb-3">
-                        <label for="patientEmail" class="form-label">Correo del Paciente</label>
-                        <input type="email" class="form-control" id="patientEmail" name="correo" placeholder="Correo del paciente" required>
-                    </div>
-                    <!-- Campo para seleccionar el archivo -->
-                    <div class="mb-3">
-                        <label for="fileUpload" class="form-label">Seleccionar archivo</label>
-                        <input type="file" class="form-control" id="fileUpload" name="file" required>
-                    </div>
-                    <div class="modal-footer d-flex justify-content-center">
-                        <button type="submit" class="btn btn-primary w-100">Subir</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-</div>
 </main>
+
 
     <footer class="text-center p-3 mt-4" style="background-color: #b5e8c3;">
         <p>&copy; 2025 Laboratorio Clinico Nissi. Todos los derechos reservados.</p>

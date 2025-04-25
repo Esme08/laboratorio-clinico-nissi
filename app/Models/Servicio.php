@@ -16,11 +16,12 @@ class Servicio extends Model
         'descripcion',
         'precio',
         'id_categoria',
+        'desactivar'
     ];
 
     public function categoria()
     {
-        return $this->belongsTo(Categorias_Servicios::class, 'id_categoria');
+        return $this->belongsTo(CategoriaServicio::class, 'id_categoria');
     }
 
     public function citas()

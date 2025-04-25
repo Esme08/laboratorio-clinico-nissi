@@ -22,6 +22,7 @@ class Cita extends Model
         'fecha',
         'hora',
         'estado',
+        'enviar_resultados',
     ];
 
     public function servicios()
