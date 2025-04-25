@@ -6,7 +6,7 @@ use App\Http\Controllers\ServicioController;
 use App\Http\Controllers\CitaController;
 use App\Http\Controllers\DashBoard;
 
-// web.php
+
 Route::post('/verificar-hora-cita', [CitaController::class, 'verificarHoraCita']);
 Route::get('/agendar-cita', [CitaController::class, 'create'])->name('cita.create');
 
