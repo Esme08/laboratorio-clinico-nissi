@@ -12,20 +12,48 @@ class AuthController extends Controller
 {
     public function loginForm()
     {
-        return view('auth.login');
+        if (Session::has('admin')) {
+
+            return redirect()->route('dashboard'); // Si ya hay sesión, redirige al dashboard
+        }
+        $adminExist = Administrador::whereNotNull('id_admin')->exists();
+        if ($adminExist) {
+            // Si ya existe un administrador, redirige al login
+            return view('login');
+        }
+        return view('create_admin');
     }
 
+    public function createAdmin(Request $request){
+        $request->validate([
+            'nombre' => 'required',
+            'correo' => 'required',
+            'password' => 'required',
+        ]);
+        //dd($request->all());
+        $admin = new Administrador();
+        $admin->nombre = $request->nombre;
+        $admin->correo = $request->correo;
+        $admin->contraseña = Hash::make($request->password);
+        $admin->save();
+        return redirect()->route('login')->with('success', 'Administrador creado exitosamente. Ahora puedes iniciar sesión.');
+
+    }
     public function login(Request $request)
     {
+
         $request->validate([
-            'usuario' => 'required|email',
+            'correo' => 'required|email',
             'password' => 'required',
         ]);
 
-        $admin = Administrador::where('correo', $request->usuario)->first();
-
+        //dd($request->all());
+        $admin = Administrador::where('correo', $request->correo)->first();
+       // dd($admin);
         if ($admin && Hash::check($request->password, $admin->contraseña)) {
             Session::put('admin', $admin);
+            //dd('Ya se ha iniciado sesión');
+
             return redirect()->route('dashboard'); // Redirige a la página de inicio
         }
 
