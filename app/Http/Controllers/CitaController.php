@@ -12,7 +12,7 @@ class CitaController extends Controller
 {
     public function create()
     {
-        $servicios = Servicio::all();
+        $servicios = Servicio::with('categoria')->where('desactivar', 0)->get();
         return view('formcita', compact('servicios'));
     }
 
