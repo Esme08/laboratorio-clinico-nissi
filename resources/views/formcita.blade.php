@@ -88,16 +88,19 @@
                                     <div class="accordion-body">
                                         <div class="mb-3">
                                             <label class="form-label">Servicios Disponibles:</label>
-                                            <div id="servicios-lista">
-                                                @foreach($servicios as $servicio)
-                                                    <div class="form-check">
-                                                        <input class="form-check-input" type="checkbox" name="servicios[]" value="{{ $servicio->id_servicio }}" id="servicio{{ $servicio->id_servicio }}" data-precio="{{ $servicio->precio }}">
-                                                        <label class="form-check-label" for="servicio{{ $servicio->id_servicio }}">
-                                                            {{ $servicio->nombre }} - ${{ number_format($servicio->precio, 2) }}
-                                                        </label>
-                                                    </div>
-                                                @endforeach
-                                            </div>
+                                            <div id="servicios-lista" class="w-full">
+                                            <input type="text" class="form-control mb-3" id="filtro" placeholder="Buscar por nombre o categoria">
+                                            @foreach($servicios as $servicio)
+                                                <div class="form-check"
+                                                data-nombre="{{ strtolower($servicio->nombre) }}"
+                                                data-categoria="{{ strtolower($servicio->categoria->nombre ?? '') }}">
+                                                    <input class="form-check-input" type="checkbox" name="servicios[]" value="{{ $servicio->id_servicio }}" id="servicio{{ $servicio->id_servicio }}" data-precio="{{ $servicio->precio }}">
+                                                    <label class="form-check-label" for="servicio{{ $servicio->id_servicio }}">
+                                                       {{$servicio->categoria->nombre}} - {{ $servicio->nombre }} - ${{ number_format($servicio->precio, 2) }}
+                                                    </label>
+                                                </div>
+                                            @endforeach
+                                        </div>
                                         </div>
                                         <div class="mb-3">
                                             <label class="form-label">Precio Total Estimado</label>
@@ -135,6 +138,34 @@
     </footer>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+    function normalizarTexto(texto) {
+        return texto
+            .normalize("NFD")                          // separa caracteres con acento
+            .replace(/[\u0300-\u036f]/g, "")           // elimina los acentos
+            .replace(/[^\w\s]/gi, "")                  // elimina signos de puntuación
+            .replace(/\s+/g, " ")                      // elimina espacios múltiples
+            .trim()                                    // elimina espacios al inicio/final
+            .toLowerCase();
+    }
+
+    document.getElementById('filtro').addEventListener('input', function () {
+        const filtro = normalizarTexto(this.value);
+        const servicios = document.querySelectorAll('.form-check');
+
+        servicios.forEach(servicio => {
+            const nombre = normalizarTexto(servicio.getAttribute('data-nombre'));
+            const categoria = normalizarTexto(servicio.getAttribute('data-categoria'));
+
+            if (nombre.includes(filtro) || categoria.includes(filtro)) {
+                servicio.style.display = '';
+            } else {
+                servicio.style.display = 'none';
+            }
+        });
+    });
+</script>
+
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const serviciosLista = document.getElementById('servicios-lista');
@@ -272,4 +303,3 @@
             });
         });
     </script>
-    
