@@ -277,7 +277,7 @@
 
         fechaCita.addEventListener('change', function () {
             const diaSemana = new Date(this.value).getDay();
-            if (diaSemana === 0) { // Domingo es 0
+            if (diaSemana === 6) { // Domingo es 0
                 alert('No se pueden agendar citas los domingos.');
                 this.value = '';
                 horaSelect.innerHTML = '<option value="">Selecciona una fecha primero</option>';
@@ -323,8 +323,8 @@
 
             let mensajeRestriccion = '';
 
-            if (diaSemana === 6) { // Sábado es 6
-                if (horaSeleccionada < 7 || horaSeleccionada >= 13) { // Hasta las 12:00 PM
+            if (diaSemana === 5) { // Sábado es 6
+                if (horaSeleccionada < 7 || horaSeleccionada >= 12) { // Hasta las 12:00 PM
                     mensajeRestriccion = 'Los sábados solo se pueden agendar citas de 7:00 AM a 12:00 PM.';
                 }
             } else if (diaSemana !== 0) { // Lunes a Viernes (0 es Domingo)
