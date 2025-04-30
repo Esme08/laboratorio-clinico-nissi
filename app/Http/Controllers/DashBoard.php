@@ -26,11 +26,13 @@ class DashBoard extends Controller
                 break;
             default:
                 $fecha = Carbon::now()->format('Y-m-d'); // Por defecto, mostrar citas de hoy
+                $tiempo = "Hoy";
                 // $fecha = null;
                 break;
         }
-        $citas = Cita::whereDate('fecha', $fecha)->paginate(10);
+        $citas = Cita::with('servicios')->whereDate('fecha', $fecha)->paginate(10);
         // Pasar las citas filtradas a la vista
+        // dd($citas);
         return view('dashboard', ['citas' => $citas, 'tiempo' => $tiempo]);
     }
 

@@ -43,9 +43,9 @@
             <form id="form-citas" action="{{ route('dashboard') }}" method="GET">
                 @csrf
             <select name="tiempo" id="tiempo">
-                <option value="Ayer" {{ request('tiempo') == 'Ayer' ? 'selected' : '' }}>Citas de Ayer</option>
-                <option value="Hoy" {{ request('tiempo') == 'Hoy' ? 'selected' : '' }}>Citas de hoy</option>
-                <option value="Manana" {{ request('tiempo') == 'Manana' ? 'selected' : '' }}>Citas de mañana</option>
+                <option value="Ayer" {{ $tiempo == 'Ayer' ? 'selected' : '' }}>Citas de Ayer</option>
+                <option value="Hoy" {{ $tiempo == 'Hoy' ? 'selected' : '' }}>Citas de hoy</option>
+                <option value="Manana" {{ $tiempo == 'Manana' ? 'selected' : '' }}>Citas de mañana</option>
             </select>
             <button type="submit">Buscar</button>
             </form>
@@ -75,29 +75,31 @@
                         <td>{{ $cita->hora }}</td>
                         <td>{{ $cita->estado }}</td>
                         <td>
-                            <button type="button" class="btn btn-primary btn-subir" data-bs-toggle="modal" data-bs-target="#uploadModal">
-                                Subir Archivo
-                            </button>
+                            @if($cita->correo_cliente)
+                                <button type="button" class="btn btn-primary btn-subir" data-bs-toggle="modal" data-bs-target="#uploadModal">
+                                    Subir Archivo
+                                </button>
+                            @endif
                         </td>
                     </tr>
                     <tr class="detalle" style="display: none;">
                         <td colspan="8">
-                            <div class="d-flex justify-content-between">
-                                <div>
-                                    <strong>Detalles de la Cita:</strong>
+                            <div class="d-flex justify-content-between" style="width: 100%;">
+                                <div class="p-4 border rounded bg-light" style="width: 100%;">
+                                    <h5 class="mb-3"><strong>Detalles de la Cita:</strong></h5>
                                     <p><strong>Nombre:</strong> {{ $cita->nombre_cliente }}</p>
                                     <p><strong>Correo:</strong> {{ $cita->correo_cliente }}</p>
-                                    <p><strong>Telefono:</strong> {{ $cita->telefono_cliente }}</p>
+                                    <p><strong>Teléfono:</strong> {{ $cita->telefono_cliente }}</p>
                                     <p><strong>Fecha:</strong> {{ $cita->fecha }}</p>
                                     <p><strong>Hora:</strong> {{ $cita->hora }}</p>
-                                    <p><strong>Estado:</strong> {{ $cita->estado }}</p>
+                                    <p><strong>Estado:</strong> <span class="badge bg-info text-dark">{{ $cita->estado }}</span></p>
                                     <p><strong>Servicios Seleccionados:</strong></p>
-                                    <ul>
-                                        @foreach (json_decode($cita->servicios_seleccionados, true) as $servicio)
-                                            <li>{{ $servicio }}</li>
+                                    <ul class="list-group mb-3" style="max-width: 300px; overflow-y: auto;">
+                                        @foreach (explode(',', $cita->servicios_seleccionados) as $servicio)
+                                            <li class="list-group-item">{{ trim($servicio) }}</li>
                                         @endforeach
                                     </ul>
-                                    <p><strong>Total:</strong> {{ $cita->precio_total}}</p>
+                                    <p><strong>Total:</strong> <span class="text-success fw-bold">${{ $cita->precio_total }}</span></p>
                                 </div>
                             </div>
                         </td>

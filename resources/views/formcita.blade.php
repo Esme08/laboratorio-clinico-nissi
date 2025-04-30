@@ -115,12 +115,13 @@
                     </div>
                     <div id="lista-servicios-modal">
                         @foreach($servicios as $servicio)
-                            <div class="servicio-item-modal d-flex justify-content-between align-items-center mb-2"
+                            <div class="servicio-item-modal justify-content-between align-items-center mb-2"
                                  data-id="{{ $servicio->id_servicio }}"
                                  data-nombre="{{ $servicio->nombre }}"
-                                 data-precio="{{ $servicio->precio }}">
+                                 data-precio="{{ $servicio->precio }}"
+                                 data-categoria="{{ $servicio->categoria->nombre }}">
                                 <div>
-                                    {{ $servicio->nombre }} - ${{ $servicio->precio }}
+                                    {{$servicio->categoria->nombre}} - {{ $servicio->nombre }} - ${{ $servicio->precio }}
                                 </div>
                                 <button type="button" class="btn btn-sm btn-outline-success agregar-servicio-modal">
                                     +
@@ -143,6 +144,8 @@
     </footer>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+
     <script>
         const serviciosModal = document.getElementById('serviciosModal');
         const listaServiciosModal = document.getElementById('lista-servicios-modal');
@@ -163,11 +166,14 @@
             todosLosServiciosModal = Array.from(listaServiciosModal.querySelectorAll('.servicio-item-modal')).map(item => ({
                 id: item.dataset.id,
                 nombre: item.dataset.nombre,
+                categoria: item.dataset.categoria,
                 precio: parseFloat(item.dataset.precio),
                 elemeto: item
             }));
+
             actualizarEstadoServiciosEnModal();
             filtrarServicios();
+
         });
 
         function actualizarListaServiciosSeleccionados() {
@@ -238,23 +244,36 @@
                 }
             }
         });
+        function normalizarTexto(texto) {
+            return texto
+            .normalize("NFD")
+            .replace(/[\u0300-\u036f]/g, "")    // elimina acentos
+            .replace(/[^\w\s]/gi, "")           // elimina signos de puntuación
+            .replace(/\s+/g, " ")               // espacios múltiples a uno solo
+            .trim()
+            .toLowerCase();
+        }
 
         function filtrarServicios() {
-            const filtro = buscarServicioInput.value.toLowerCase();
+            const filtro = normalizarTexto(buscarServicioInput.value);
             todosLosServiciosModal.forEach(servicio => {
-                const nombre = servicio.nombre.toLowerCase();
-                const elemento = servicio.elemeto;
-                if (nombre.includes(filtro)) {
-                    elemento.style.display = 'flex';
-                } else {
-                    elemento.style.display = 'none';
-                }
+            const nombre = normalizarTexto(servicio.nombre);
+            const categoria = normalizarTexto(servicio.categoria);
+
+            if (nombre.includes(filtro) || categoria.includes(filtro)) {
+                servicio.elemeto.style.display = 'flex';
+
+            } else {
+                servicio.elemeto.style.display = 'none';
+
+            }
             });
         }
 
-        // Evento para filtrar servicios en el modal
-        buscarServicioInput.addEventListener('input', filtrarServicios);
-
+        //Evento para filtrar servicios en el modal
+        buscarServicioInput.addEventListener('input', () => {
+            filtrarServicios();
+        });
 
         fechaCita.addEventListener('change', function () {
             const diaSemana = new Date(this.value).getDay();
