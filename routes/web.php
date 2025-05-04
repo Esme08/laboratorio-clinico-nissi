@@ -5,6 +5,14 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ServicioController;
 use App\Http\Controllers\CitaController;
 use App\Http\Controllers\DashBoard;
+use App\Http\Controllers\Admin\ClinicaController;
+
+Route::prefix('admin/clinica')->name('admin.clinica.')->middleware('auth')->group(function () { // Asegúrate de tener un middleware de autenticación
+    Route::get('/editar', [ClinicaController::class, 'edit'])->name('edit');
+    Route::post('/actualizar', [ClinicaController::class, 'update'])->name('update');
+    Route::post('/imagenes/guardar', [ClinicaController::class, 'storeImagen'])->name('imagenes.store');
+    Route::delete('/imagenes/{id}/eliminar', [ClinicaController::class, 'destroyImagen'])->name('imagenes.destroy');
+});
 
 Route::post('/verificar-hora-cita', [CitaController::class, 'verificarHoraCita']);
 Route::get('/agendar-cita', [CitaController::class, 'create'])->name('cita.create');
