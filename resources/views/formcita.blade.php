@@ -88,6 +88,7 @@
                             <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#serviciosModal">
                                 Buscar y Añadir Servicios
                             </button>
+                            <div id="serviciosError" class="form-text text-danger" style="display:none;"></div>
                             <label class="form-label mt-3">Servicios Seleccionados</label>
                             <ul id="servicios-seleccionados-lista" class="list-group">
                             </ul>
@@ -157,10 +158,20 @@
         const formCita = document.getElementById('formCita');
         const submitBtn = document.getElementById('submitBtn');
         const mensajeDiv = document.getElementById('mensaje');
+        const nombreInput = document.querySelector('input[name="nombre"]');
+        const telefonoInput = document.querySelector('input[name="telefono"]');
         const buscarServiciosBtn = document.querySelector('#serviciosModal button[data-bs-toggle="modal"]'); // Selecciona el botón
 
         let serviciosSeleccionados = [];
         let todosLosServiciosModal = [];
+
+        nombreInput.addEventListener('input', function() {
+             this.value = this.value.replace(/[^a-zA-Z\s]/g, ''); // Solo letras y espacios
+           });
+
+           telefonoInput.addEventListener('input', function() {
+             this.value = this.value.replace(/[^0-9]/g, ''); // Solo números
+            });
 
         serviciosModal.addEventListener('show.bs.modal', function () {
             todosLosServiciosModal = Array.from(listaServiciosModal.querySelectorAll('.servicio-item-modal')).map(item => ({
@@ -341,6 +352,30 @@
 
         formCita.addEventListener("submit", function(event) {
             event.preventDefault();
+
+            let errores = {};
+            
+            if (nombreInput.value.trim() === '') {
+                errores.nombre = 'El nombre es obligatorio.';
+            }
+
+            if (serviciosSeleccionados.length === 0) {
+                errores.servicios = 'Debes seleccionar al menos un servicio.';
+            }
+            if (horaSelect.value === '') {
+                errores.hora = 'Debes seleccionar una hora.';
+            }
+
+            mensajeDiv.innerHTML = ''; 
+            if (Object.keys(errores).length > 0) {
+                let mensajeErrorHTML = '<div class="alert alert-danger">';
+                for (const key in errores) {
+                    mensajeErrorHTML += `<p>${errores[key]}</p>`;
+                }
+                mensajeErrorHTML += '</div>';
+                mensajeDiv.innerHTML = mensajeErrorHTML;
+                return;
+            }
 
             const form = event.target;
             const formData = new FormData(form);

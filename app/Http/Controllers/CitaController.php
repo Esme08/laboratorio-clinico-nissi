@@ -80,10 +80,10 @@ class CitaController extends Controller
     {
         try {
             $request->validate([
-                'nombre' => 'nullable|string',
+                'nombre' => 'required|string',
                 'correo' => 'nullable|email',
                 'telefono' => 'nullable|numeric|digits_between:8,15',
-                'servicios' => 'required|array',
+                'servicios' => 'required|array|min:1',
                 'servicios.*' => 'exists:Servicios,id_servicio',
                 'precio_total' => 'required|numeric|min:0',
                 'fecha' => 'required|date',
