@@ -10,7 +10,7 @@ class Clinica extends Model
 {
     use HasFactory;
 
-    protected $table = 'clinicas'; // Asegúrate de que el nombre de tu tabla sea 'clinicas'
+    protected $table = 'clinica'; // Asegúrate de que el nombre de tu tabla sea 'clinicas'
     protected $primaryKey = 'id_clinica';
     public $timestamps = false; // Si no tienes campos de timestamps
 

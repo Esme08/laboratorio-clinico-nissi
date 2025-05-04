@@ -1,24 +1,22 @@
 <?php
 
-namespace App\Http\Controllers\Admin;
+namespace App\Http\Controllers;
 
-use App\Http\Controllers\Controller;
 use App\Models\Clinica;
 use App\Models\ImagenClinica;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Facades\Log;
 
 class ClinicaController extends Controller
 {
     /**
-     * Muestra el formulario para editar la información de la clínica.
+     * Muestra el formulario para editar la información de la clínica e imágenes.
      *
      * @return \Illuminate\Contracts\View\View
      */
     public function edit()
     {
-        $clinica = Clinica::with('imagenes')->firstOrFail(); // Asumiendo que solo hay una entrada de clínica
+        $clinica = Clinica::with('imagenes')->firstOrFail();
         return view('admin.clinica.edit', compact('clinica'));
     }
 
@@ -40,7 +38,7 @@ class ClinicaController extends Controller
         $clinica = Clinica::firstOrFail();
         $clinica->update($request->all());
 
-        return redirect()->route('admin.clinica.edit')->with('success', 'Información de la clínica actualizada correctamente.');
+        return redirect()->route('admin.clinica.editar')->with('success', 'Información de la clínica actualizada correctamente.');
     }
 
     /**
@@ -56,15 +54,15 @@ class ClinicaController extends Controller
         ]);
 
         $clinica = Clinica::firstOrFail();
-        $path = $request->file('imagen')->store('public/clinica/carousel'); // Guarda la imagen en storage/app/public/clinica/carousel
-        $url = Storage::url($path); // Obtiene la URL pública de la imagen
+        $path = $request->file('imagen')->store('public/clinica/carousel'); // Guarda la imagen
+        $url = Storage::url($path); // Obtiene la URL pública
 
         ImagenClinica::create([
             'id_clinica' => $clinica->id_clinica,
             'url_imagen' => $url,
         ]);
 
-        return redirect()->route('admin.clinica.edit')->with('success', 'Imagen del carrusel añadida correctamente.');
+        return redirect()->route('admin.clinica.editar')->with('success', 'Imagen del carrusel añadida correctamente.');
     }
 
     /**
@@ -85,6 +83,6 @@ class ClinicaController extends Controller
 
         $imagen->delete();
 
-        return redirect()->route('admin.clinica.edit')->with('success', 'Imagen del carrusel eliminada correctamente.');
+        return redirect()->route('admin.clinica.editar')->with('success', 'Imagen del carrusel eliminada correctamente.');
     }
 }
