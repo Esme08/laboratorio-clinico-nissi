@@ -8,6 +8,9 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <style>
+    nav {
+            background-color: #b5e8c3;
+        }
     .carousel-inner img { 
         max-width: 70%;  
         max-height: 400px;
@@ -17,15 +20,34 @@
         font-family: 'Lora', serif;
     }
     footer {
-        padding: 10px;
-        text-align: center;
-        font-size: 14px;
+            padding: 10px;
+            text-align: center;
+            font-size: 14px;
+            background-color: #b5e8c3;
+            margin-top: 2rem;
     }
 </style>
 <body>
 
-<!-- Navbar -->
-@include('includes.navbar')
+    <!-- Navbar -->
+   <nav class="navbar navbar-expand-lg t">
+        <div class="container">
+            <a class="navbar-brand" href="{{ route('home') }}">
+                <img src="{{ asset('imagenes/farmacia.png') }}" alt="Logo" width="40" height="40" class="d-inline-block align-text-top">
+                Laboratorio Clinico Nissi
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item"><a class="nav-link" href="{{ route('home') }}">Inicio</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#">Servicios</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#">Contacto</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
 
 <div class="container mt-2">
     <div class="text-center mb-3">
@@ -110,7 +132,12 @@
 </div>
 
 <!-- Footer -->
-@include('includes.footer')
+<footer class="text-center p-3 mt-4">
+        <p>&copy; 2025 Laboratorio Clinico Nissi. Todos los derechos reservados.</p>
+        <p>"Tu salud es nuestra prioridad, confía en nosotros para obtener un diagnóstico preciso."</p>
+        <img src="{{ asset('imagenes/farmacia.png') }}" alt="Logo" width="30" height="30" class="d-inline-block align-text-top">
+</footer>
+
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
