@@ -5,6 +5,13 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ServicioController;
 use App\Http\Controllers\CitaController;
 use App\Http\Controllers\DashBoard;
+use App\Http\Controllers\ClinicaController;
+
+Route::get('/admin/clinica/editar', [ClinicaController::class, 'edit'])->name('admin.clinica.editar');
+Route::post('/admin/clinica/actualizar', [ClinicaController::class, 'update'])->name('admin.clinica.actualizar');
+Route::post('/admin/clinica/imagenes/guardar', [ClinicaController::class, 'storeImagen'])->name('admin.clinica.imagenes.guardar');
+Route::delete('/admin/clinica/imagenes/{id}/eliminar', [ClinicaController::class, 'destroyImagen'])->name('admin.clinica.imagenes.eliminar');
+
 
 Route::post('/verificar-hora-cita', [CitaController::class, 'verificarHoraCita']);
 Route::get('/agendar-cita', [CitaController::class, 'create'])->name('cita.create');
