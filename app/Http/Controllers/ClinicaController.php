@@ -16,8 +16,46 @@ class ClinicaController extends Controller
      */
     public function edit()
     {
-        $clinica = Clinica::with('imagenes')->firstOrFail();
-        return view('admin.clinica.edit', compact('clinica'));
+
+        $clinica = Clinica::with('imagenes')->first();
+        if (!$clinica) {
+            $clinica = new Clinica();
+            $clinica->imagenes = collect();
+        }
+        return view('admin.edit', compact('clinica'));
+    }
+
+    public function saveInfoClinica(Request $request)
+    {
+
+        $request->validate([
+            'nombre' => 'required|string|max:255',
+            'descripcion' => 'nullable|string',
+            'ubicacion_google_maps' => 'nullable|string|url',
+            'contacto' => 'nullable|string|max:255',
+            'imagenes.*' => 'image|mimes:jpeg,png,jpg,gif|max:2048'
+        ]);
+        // dd ($request->all());
+        $requestClinica = $request->except('imagenes');
+        $clinica = Clinica::first();
+        if ($clinica) {
+            $clinica->update($requestClinica);
+        } else {
+            $clinica = Clinica::create($requestClinica);
+        }
+
+        if($request->hasFile('imagenes')) {
+            foreach ($request->file('imagenes') as $imagen) {
+                $path = $imagen->store('clinica/carousel', 'public');
+                $url = Storage::url($path);
+
+                ImagenClinica::create([
+                    'id_clinica' => $clinica->id_clinica,
+                    'url_imagen' => $url,
+                ]);
+            }
+        }
+        return redirect()->route('clinica.info')->with('success', 'Información de la clínica actualizada correctamente.');
     }
 
     /**

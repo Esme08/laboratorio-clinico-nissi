@@ -21,10 +21,9 @@
 
         <div class="card p-4 mb-4">
             <h5 class="mb-3">Información Principal</h5>
-            <form action="{{ route('admin.clinica.update') }}" method="POST">
+            <form action="{{route('admin.clinica.guardar')}}" method="POST" enctype="multipart/form-data">
                 @csrf
                 @method('POST')
-
                 <div class="mb-3">
                     <label for="nombre" class="form-label">Nombre</label>
                     <input type="text" class="form-control" id="nombre" name="nombre" value="{{ $clinica->nombre }}" required>
@@ -49,38 +48,30 @@
                     @error('contacto') <div class="text-danger">{{ $message }}</div> @enderror
                 </div>
 
+                <div class="card p-4 mb-3">
+                    <h5 class="mb-3">Imágenes del Carrusel</h5>
+                    <div class="row mb-3">
+                        @forelse ($clinica->imagenes as $imagen)
+                            <img src="{{ asset($imagen->url_imagen) }}" alt="Imagen del Carrusel" class="img-thumbnail p-2 w-25">
+                        @empty
+                            <p>No hay imágenes en el carrusel.</p>
+                        @endforelse
+                    </div>
+                </div>
+                <div class="card p-4 mb-3">
+                        <h6>Añadir Nueva Imagen</h6>
+                        <div class="mb-3">
+                            <label for="imagen" class="form-label">Seleccionar Imagen</label>
+                            <input type="file" class="form-control" id="imagen" name="imagenes[]" multiple>
+                            @error('imagen') <div class="text-danger">{{ $message }}</div> @enderror
+                        </div>
+                </div>
+
                 <button type="submit" class="btn btn-primary">Actualizar Información</button>
             </form>
         </div>
 
-        <div class="card p-4">
-            <h5 class="mb-3">Imágenes del Carrusel</h5>
-            <div class="row mb-3">
-                @forelse ($clinica->imagenes as $imagen)
-                    <div class="col-md-3 mb-3">
-                        <img src="{{ asset($imagen->url_imagen) }}" alt="Imagen del Carrusel" class="img-thumbnail">
-                        <form action="{{ route('admin.clinica.imagenes.destroy', $imagen->id_imagen) }}" method="POST" class="mt-2">
-                            @csrf
-                            @method('DELETE')
-                            <button type="submit" class="btn btn-danger btn-sm">Eliminar</button>
-                        </form>
-                    </div>
-                @empty
-                    <p>No hay imágenes en el carrusel.</p>
-                @endforelse
-            </div>
 
-            <h6>Añadir Nueva Imagen</h6>
-            <form action="{{ route('admin.clinica.imagenes.store') }}" method="POST" enctype="multipart/form-data">
-                @csrf
-                <div class="mb-3">
-                    <label for="imagen" class="form-label">Seleccionar Imagen</label>
-                    <input type="file" class="form-control" id="imagen" name="imagen" required>
-                    @error('imagen') <div class="text-danger">{{ $message }}</div> @enderror
-                </div>
-                <button type="submit" class="btn btn-success">Subir Imagen</button>
-            </form>
-        </div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>

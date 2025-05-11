@@ -36,6 +36,15 @@ class DashBoard extends Controller
         return view('dashboard', ['citas' => $citas, 'tiempo' => $tiempo]);
     }
 
+    public function updateEstadoCita(Request $request)
+    {
+        $data = $request->all();
+        $id = $data['id_cita'];
+        $cita = Cita::find($id);
+        $cita->estado = $data['estado'];
+        $cita->save();
+        return redirect()->back()->with('success', 'Estado de la cita actualizado correctamente');
+    }
     public function indexServicio(Request $request)
     {
 

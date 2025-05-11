@@ -35,6 +35,7 @@ class AuthController extends Controller
         $admin->nombre = $request->nombre;
         $admin->correo = $request->correo;
         $admin->contraseña = Hash::make($request->password);
+
         $admin->save();
         return redirect()->route('login')->with('success', 'Administrador creado exitosamente. Ahora puedes iniciar sesión.');
 
@@ -48,7 +49,7 @@ class AuthController extends Controller
         ]);
 
         //dd($request->all());
-        $admin = Administrador::where('correo', $request->correo)->first();
+        $admin = Administrador::where('correo', $request->correo)->where('estado', 'activo')->first();
        // dd($admin);
         if ($admin && Hash::check($request->password, $admin->contraseña)) {
             Session::put('admin', $admin);

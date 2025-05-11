@@ -23,7 +23,8 @@
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto">
                     <li class="nav-item"><a class="nav-link" href="{{ route('dashboard') }}">DashBoard</a></li>
-                    <li class="nav-item"><a class="nav-link" href="{{ route('cita.store') }}">Agendar Cita</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{{ route('clinica.info') }}" target="_blank">Info Clinica</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{{ route('cita.store') }}"  target="_blank">Agendar Cita</a></li>
                     <li class="nav-item"><a class="nav-link"  href="{{ route('admin.servicios') }}">Servicios</a></li>
                     <li class="nav-item"><a class="nav-link" href="{{ route('historial.citas')}}">Historial</a></li>
                     <li class="nav-item"><a class="nav-link" href="{{ route('usuarios.index')}}">Usuarios</a></li>
@@ -40,14 +41,13 @@
         </div>
         <div>
             <h3>Lista de Citas</h3>
-            <form id="form-citas" action="{{ route('dashboard') }}" method="GET">
+            <form id="form-citas" action="{{ route('dashboard') }}" method="GET" >
                 @csrf
-            <select name="tiempo" id="tiempo">
+            <select name="tiempo" id="tiempo" class="form-select form-select-sm w-auto" onchange="this.form.submit()">
                 <option value="Ayer" {{ $tiempo == 'Ayer' ? 'selected' : '' }}>Citas de Ayer</option>
                 <option value="Hoy" {{ $tiempo == 'Hoy' ? 'selected' : '' }}>Citas de hoy</option>
                 <option value="Manana" {{ $tiempo == 'Manana' ? 'selected' : '' }}>Citas de mañana</option>
             </select>
-            <button type="submit">Buscar</button>
             </form>
         </div>
         <div class="table-responsive">
@@ -73,7 +73,18 @@
                         <td>{{ $cita->telefono_cliente }}</td>
                         <td>{{ $cita->fecha }}</td>
                         <td>{{ $cita->hora }}</td>
-                        <td>{{ $cita->estado }}</td>
+                        <td class="select-estado">
+                           <form class="" action="{{ route('cita.updateEstado', $cita->id_cita) }}" method="POST">
+                                @csrf
+                                @method('PUT')
+                                <input type="hidden" name="id_cita" value="{{ $cita->id_cita }}">
+                                <select name="estado" id="estado-{{ $cita->id_cita }}" class="form-select form-select-sm w-auto" onchange="this.form.submit()">
+                                    <option value="Pendiente" {{ $cita->estado == 'Pendiente' ? 'selected' : '' }}>Pendiente</option>
+                                    <option value="Completada" {{ $cita->estado == 'Completada' ? 'selected' : '' }}>Completada</option>
+                                    <option value="Cancelada" {{ $cita->estado == 'Cancelada' ? 'selected' : '' }}>Cancelada</option>
+                                </select>
+                            </form>
+                        </td>
                         <td>
                             @if($cita->correo_cliente)
                                 <button type="button" class="btn btn-primary btn-subir" data-bs-toggle="modal" data-bs-target="#uploadModal">
@@ -160,7 +171,7 @@
         document.querySelectorAll('.fila').forEach((row, index) => {
             row.addEventListener('click', function (event) {
                 // Evitar que el clic en el botón active la fila
-                if (event.target.closest('.btn-subir')) {
+                if (event.target.closest('.btn-subir') || event.target.closest('.select-estado')) {
                     return;
                 }
                 let detalleRow = document.querySelectorAll('.detalle')[index];
