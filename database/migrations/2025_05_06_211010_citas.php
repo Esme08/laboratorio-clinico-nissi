@@ -16,7 +16,7 @@ return new class extends Migration
             $table->bigIncrements('id_cita');
             $table->string('nombre_cliente');
             $table->string('correo_cliente')->nullable();
-            $table->string('telefono_cliente');
+            $table->string('telefono_cliente')->nullable();
             $table->date('fecha');
             $table->time('hora');
             $table->string('estado');

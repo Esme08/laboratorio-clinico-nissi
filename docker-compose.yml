@@ -2,7 +2,7 @@ services:
     app:
         build:
             context: .
-            dockerfile: /docker/php/Dockerfile
+            dockerfile: ./docker/php/Dockerfile
         image: laravel-app
         container_name: laravel-app
         volumes:
