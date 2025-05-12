@@ -6,6 +6,8 @@
     <title>{{$clinica->nombre}}</title>
     <link href="https://fonts.googleapis.com/css2?family=Lora:wght@400;700&display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
 </head>
 <style>
     nav {
@@ -30,20 +32,34 @@
 <body>
 
     <!-- Navbar -->
-   <nav class="navbar navbar-expand-lg t">
+   <nav class="navbar navbar-expand-lg " style="background-color: #b5e8c3;">
+
         <div class="container">
-            <a class="navbar-brand" href="{{ route('home') }}">
-                <img src="{{ asset('imagenes/farmacia.png') }}" alt="Logo" width="40" height="40" class="d-inline-block align-text-top">
-                {{ $clinica->nombre }}
+            <a class="navbar-brand d-flex align-items-center gap-2" href="/" style="font-size: 1.2rem; font-weight: bold; color: #155724;">
+                <img src="{{ asset('imagenes/farmacia.png') }}" alt="Logo" width="40" height="40" class="d-inline-block align-text-top rounded-circle border border-dark">
+                <span>{{$clinica->nombre}}</span>
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto">
-                    <li class="nav-item"><a class="nav-link" href="{{ route('home') }}">Inicio</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#">Servicios</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#">Contacto</a></li>
+                    <li class="nav-item">
+                        <a class="nav-link fw-bold text-success d-flex align-items-center gap-2" href="{{ route('home') }}" style="font-size: 1.1rem;">
+                            <i class="bi bi-house-door"></i> <span>Inicio</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link fw-bold text-success d-flex align-items-center gap-2" href="#"  style="font-size: 1.1rem;">
+                            <i class="bi bi-briefcase"></i> <span>Servicios</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link fw-bold text-success d-flex align-items-center gap-2" href="#" style="font-size: 1.1rem;">
+                            <i class="bi bi-envelope"></i> <span>Contacto</span>
+                        </a>
+                    </li>
+
                 </ul>
             </div>
         </div>

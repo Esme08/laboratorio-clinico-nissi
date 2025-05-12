@@ -35,20 +35,34 @@
     </style>
 </head>
 <body class="bg-light">
-    <nav class="navbar navbar-expand-lg t">
+   <nav class="navbar navbar-expand-lg " style="background-color: #b5e8c3;">
+
         <div class="container">
-            <a class="navbar-brand" href="{{ route('home') }}">
-                <img src="{{ asset('imagenes/farmacia.png') }}" alt="Logo" width="40" height="40" class="d-inline-block align-text-top">
-                Laboratorio Clinico Nissi
+            <a class="navbar-brand d-flex align-items-center gap-2" href="/" style="font-size: 1.2rem; font-weight: bold; color: #155724;">
+                <img src="{{ asset('imagenes/farmacia.png') }}" alt="Logo" width="40" height="40" class="d-inline-block align-text-top rounded-circle border border-dark">
+                <span>{{$clinica->nombre}}</span>
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto">
-                    <li class="nav-item"><a class="nav-link" href="{{ route('home') }}">Inicio</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#">Servicios</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#">Contacto</a></li>
+                    <li class="nav-item">
+                        <a class="nav-link fw-bold text-success d-flex align-items-center gap-2" href="{{ route('home') }}" style="font-size: 1.1rem;">
+                            <i class="bi bi-house-door"></i> <span>Inicio</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link fw-bold text-success d-flex align-items-center gap-2" href="#" style="font-size: 1.1rem;">
+                            <i class="bi bi-briefcase"></i> <span>Servicios</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link fw-bold text-success d-flex align-items-center gap-2" href="#" style="font-size: 1.1rem;">
+                            <i class="bi bi-envelope"></i> <span>Contacto</span>
+                        </a>
+                    </li>
+
                 </ul>
             </div>
         </div>
@@ -103,7 +117,7 @@
         </div>
     </div>
 
-    <div class="modal fade" id="serviciosModal" tabindex="-1" aria-labelledby="serviciosModalLabel" aria-hidden="true">
+    <div class="modal fade " id="serviciosModal" tabindex="-1" aria-labelledby="serviciosModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
@@ -114,7 +128,7 @@
                     <div class="mb-3">
                         <input type="text" id="buscarServicio" class="form-control" placeholder="Buscar por nombre o categoría...">
                     </div>
-                    <div id="lista-servicios-modal">
+                    <div id="lista-servicios-modal" style="height: 400px; overflow-y: auto;">
                         @foreach($servicios as $servicio)
                             <div class="servicio-item-modal justify-content-between align-items-center mb-2"
                                  data-id="{{ $servicio->id_servicio }}"
@@ -354,7 +368,7 @@
             event.preventDefault();
 
             let errores = {};
-            
+
             if (nombreInput.value.trim() === '') {
                 errores.nombre = 'El nombre es obligatorio.';
             }
@@ -366,7 +380,7 @@
                 errores.hora = 'Debes seleccionar una hora.';
             }
 
-            mensajeDiv.innerHTML = ''; 
+            mensajeDiv.innerHTML = '';
             if (Object.keys(errores).length > 0) {
                 let mensajeErrorHTML = '<div class="alert alert-danger">';
                 for (const key in errores) {

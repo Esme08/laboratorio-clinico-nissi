@@ -118,9 +118,8 @@ class ClinicaController extends Controller
         if (Storage::exists($path)) {
             Storage::delete($path);
         }
-
         $imagen->delete();
 
-        return redirect()->route('admin.clinica.editar')->with('success', 'Imagen del carrusel eliminada correctamente.');
+        return redirect()->route('clinica.info')->with('success', 'Imagen del carrusel eliminada correctamente.');
     }
 }

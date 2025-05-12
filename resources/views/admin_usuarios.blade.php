@@ -6,25 +6,68 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
     integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous" />
     <link rel="stylesheet" href="{{ asset('css/administrador.css') }}">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
     <title>Administrar Usuarios</title>
+    <style>
+        .navbar {
+            font-family: 'Roboto', sans-serif;
+            font-size: 1rem;
+        }
+    </style>
 </head>
 <body>
 <header>
 <nav class="navbar navbar-expand-lg " style="background-color: #b5e8c3;">
+
         <div class="container">
-            <a class="navbar-brand" href="#">
-                <img src="{{ asset('imagenes/farmacia.png') }}" alt="Logo" width="40" height="40" class="d-inline-block align-text-top">
-                Laboratorio Clinico Nissi</a>
+            <a class="navbar-brand d-flex align-items-center gap-2" href="/dashboard" style="font-size: 1.2rem; font-weight: bold; color: #155724;">
+                <img src="{{ asset('imagenes/farmacia.png') }}" alt="Logo" width="40" height="40" class="d-inline-block align-text-top rounded-circle border border-dark">
+                <span>Laboratorio Clinico Nissi</span>
+            </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto">
-                    <li class="nav-item"><a class="nav-link" href="{{ route('dashboard') }}">DashBoard</a></li>
-                    <li class="nav-item"><a class="nav-link" href="{{ route('cita.store') }}">Agendar Cita</a></li>
-                    <li class="nav-item"><a class="nav-link"  href="{{ route('admin.servicios') }}">Servicios</a></li>
-                    <li class="nav-item"><a class="nav-link" href="{{ route('historial.citas')}}">Historial</a></li>
-                    <li class="nav-item"><a class="nav-link" href="{{ route('usuarios.index')}}">Usuarios</a></li>
+                    <li class="nav-item">
+                        <a class="nav-link fw-bold text-success d-flex align-items-center gap-2" href="{{ route('dashboard') }}" style="font-size: 1.1rem;">
+                            <i class="bi bi-calendar-check"></i> <span>Citas</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link fw-bold text-success d-flex align-items-center gap-2" href="{{ route('clinica.info') }}" target="_blank" style="font-size: 1.1rem;">
+                            <i class="bi bi-info-circle"></i> <span>Info Clinica</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link fw-bold text-success d-flex align-items-center gap-2" href="{{ route('cita.store') }}" target="_blank" style="font-size: 1.1rem;">
+                            <i class="bi bi-calendar-plus"></i> <span>Agendar Cita</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link fw-bold text-success d-flex align-items-center gap-2" href="{{ route('admin.servicios') }}" style="font-size: 1.1rem;">
+                            <i class="bi bi-briefcase"></i> <span>Servicios</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link fw-bold text-success d-flex align-items-center gap-2" href="{{ route('historial.citas') }}" style="font-size: 1.1rem;">
+                            <i class="bi bi-clock-history"></i> <span>Historial</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link fw-bold text-success d-flex align-items-center gap-2" href="{{ route('usuarios.index') }}" style="font-size: 1.1rem;">
+                            <i class="bi bi-people"></i> <span>Usuarios</span>
+                        </a>
+                    </li>
+                     <li class="nav-item">
+                        <form action="{{ route('logout') }}" method="POST" class="d-inline">
+                            @csrf
+                            <button type="submit" class="btn btn-link nav-link fw-bold text-danger d-flex align-items-center gap-2" style="font-size: 1.1rem;">
+                                <i class="bi bi-box-arrow-right"></i> <span>Logout</span>
+                            </button>
+                        </form>
+                    </li>
                 </ul>
             </div>
         </div>
@@ -33,31 +76,45 @@
 <main>
     <div class="container">
         <div class="text-center mt-4">
-            <h1 >Bienvenido a Laboratorio Clinico Nissi</h1>
-            <h2>Administrar Servicios</h2>
+            <h1 class="text-success fw-bold">Bienvenido a Laboratorio Clínico Nissi</h1>
+            <h2 class="text-success fw-bold">Administrar Usuarios</h2>
         </div>
+           @if (session('success'))
+            <div id="success-alert" class="alert alert-success fw-bold text-success">{{ session('success') }}</div>
+            <script>
+            setTimeout(() => {
+                const alert = document.getElementById('success-alert');
+                if (alert) {
+                alert.style.transition = 'opacity 0.5s';
+                alert.style.opacity = '0';
+                setTimeout(() => alert.remove(), 500);
+                }
+            }, 5000);
+            </script>
+        @endif
         <div class="d-flex justify-content-between align-items-center mb-3">
-            <div>
-                <button type="button" class="btn-primary btn mb-3" data-bs-toggle="modal" data-bs-target="#saveModal">Agregar Administrador</button>
-            </div>
+            <button type="button" class="btn btn-outline-primary btn-md mb-3 fw-bold " data-bs-toggle="modal" data-bs-target="#saveModal">
+                    <i class="bi bi-plus-circle"></i> Agregar Administrador
+            </button>
         </div>
         <div class="table-responsive">
             <table class="table table-striped">
                 <thead>
-                    <tr>
-                        <th scope="col">ID</th>
-                        <th scope="col">Nombre</th>
-                        <th scope="col">Correo</th>
+                    <tr class="table-success text-center">
+                        <th scope="col" class="fw-bold">ID</th>
+                        <th scope="col" class="fw-bold">Nombre</th>
+                        <th scope="col" class="fw-bold">Correo</th>
+                        <th scope="col" class="fw-bold">Acciones</th>
                     </tr>
                 </thead>
                 <tbody>
                     @forelse($usuarios as $usuario)
-                    <tr class="fila">
-                        <th scope="row">{{ $usuario->id_admin}}</th>
+                    <tr class="fila align-middle text-center">
+                        <td>{{ $usuario->id_admin}}</td>
                         <td>{{ $usuario->nombre }}</td>
                         <td>{{ $usuario->correo }}</td>
                         <td class="d-flex justify-content-center gap-2">
-                            <button type="button" class="btn btn-primary btn-subir"
+                            <button type="button" class="btn btn-outline-primary btn-subir"
                                     data-bs-toggle="modal"
                                     data-bs-target="#saveModal"
                                     data-id="{{ $usuario->id_admin }}"
@@ -66,14 +123,16 @@
                                     data-password = "{{ $usuario->contraseña }}"
                                     data-editar = "true"
                             >
-                                Editar
+                                <i class="bi bi-pencil-square"></i>
                             </button>
 
                             <form action="{{ route('usuario.delete') }}" method="post">
                                 @csrf
                                 <input type="hidden" name="id_admin" value="{{ $usuario->id_admin }}">
                                 @method('DELETE')
-                                <button type="submit" class="btn btn-danger">Eliminar</button>
+                                <button type="submit" class="btn btn-outline-danger ">
+                                    <i class="bi bi-trash"></i>
+                                </button>
                             </form>
                         </td>
                     </tr>
@@ -98,7 +157,7 @@
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="saveModalLabel">Guardar Administrador</h5>
+                <h5 class="modal-title fw-bold text-success" id="saveModalLabel">Gestión de Servicios</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
@@ -107,19 +166,24 @@
                     <input type="hidden" name="id_admin">
                     <!-- Campo para ingresar el correo del paciente -->
                     <div class="mb-3">
-                        <label for="patientNombre" class="form-label">Nombre del Usuario</label>
-                        <input type="text" class="form-control" id="patientNombre" name="nombre" placeholder="Nombre de Usuario" required>
+                        <label for="patientNombre" class="form-label fw-bold text-success">Nombre del Usuario</label>
+                        <input type="text" class="form-control border border-success px-3" id="patientNombre" name="nombre" placeholder="Nombre de Usuario" required>
                     </div>
                     <div class="mb-3">
-                        <label for="patientCorreo" class="form-label">Correo</label>
-                        <input type="text" class="form-control" id="patientCorreo" name="correo" placeholder="Correo" required>
+                        <label for="patientCorreo" class="form-label fw-bold text-success">Correo</label>
+                        <input type="email" class="form-control border border-success px-3" id="patientCorreo" name="correo" placeholder="Correo" required>
                     </div>
-                    <div id="content-password" class="mb-3">
-                        <label for="patientPassword" class="form-label">Contraseña</label>
-                        <input type="password" class="form-control" id="patientPassword" name="password" placeholder="Contraseña" required>
+                   <div id="content-password" class="mb-3">
+                        <label for="patientPassword" class="form-label fw-bold text-success">Contraseña</label>
+                        <input type="password" class="form-control border border-success px-3" id="patientPassword" name="password" placeholder="Contraseña" required>
                     </div>
+                    <div id="content-repetpassword" class="mb-3">
+                        <label for="repeatPassword" class="form-label fw-bold text-success">Repetir Contraseña</label>
+                        <input type="password" class="form-control border border-success px-3" id="repeatPassword" name="repeat_password" placeholder="Repetir Contraseña" required>
+                    </div>
+
                     <div class="modal-footer d-flex justify-content-center">
-                        <button type="submit" class="btn btn-primary w-100">Guardar</button>
+                        <button type="submit" class="btn btn-success fw-bold px-5 py-2 shadow-sm" style="width: auto; min-width: 150px;"><i class="bi bi-save"></i> Guardar</button>
                     </div>
                 </form>
             </div>
@@ -135,8 +199,47 @@
         <img src="{{ asset('imagenes/farmacia.png') }}" alt="Logo" width="30" height="30" class="d-inline-block align-text-top">
     </footer>
     <script>
+    const password = document.getElementById("patientPassword");
+    const repeatPassword = document.getElementById("repeatPassword");
     const saveModal = document.getElementById('saveModal');
     const form = saveModal.querySelector('form');
+
+    function validatePasswords() {
+        const passwordVal = password.value;
+        const repeatPasswordVal = repeatPassword.value;
+
+        // Si ambos están vacíos (caso de edición sin cambiar contraseña), no validar nada
+       if (!passwordVal && !repeatPasswordVal) {
+            repeatPassword.setCustomValidity(""); // Esto habilita el submit
+            return true;
+        }
+
+        // Si solo uno de los dos está lleno, marcar error
+        if ((passwordVal && !repeatPasswordVal) || (!passwordVal && repeatPasswordVal)) {
+            repeatPassword.setCustomValidity("Debes llenar ambos campos si vas a cambiar la contraseña");
+            return false;
+        }
+
+        // Si ambos están llenos, verificar que coincidan
+        if (passwordVal !== repeatPasswordVal) {
+            repeatPassword.setCustomValidity("Las contraseñas no coinciden");
+            return false;
+        }
+
+        // Todo está correcto
+        repeatPassword.setCustomValidity("");
+        return true;
+    }
+
+    repeatPassword.addEventListener("input", validatePasswords);
+    password.addEventListener("input", validatePasswords);
+
+    form.addEventListener("submit", function (e) {
+        if (!validatePasswords()) {
+            e.preventDefault(); // Evita el envío si las contraseñas no coinciden
+        }
+    });
+
 
     form.addEventListener('submit', function () {
         setTimeout(() => {
@@ -159,8 +262,9 @@
         const nombre = button.getAttribute('data-nombre');
         const correo = button.getAttribute('data-correo');
         const editar = button.getAttribute('data-editar');
-        const password = button.getAttribute('data-password');
-
+        const existingPassword  = button.getAttribute('data-password');
+        const passwordInput = document.getElementById('patientPassword');
+        const repeatPasswordInput = document.getElementById('repeatPassword');
         if (editar == "true") {
             saveModal.querySelector('.modal-title').textContent = 'Editar Administrador';
             form.action = updateUrl;
@@ -168,10 +272,30 @@
             form.querySelector('input[name="id_admin"]').value = id || '';
             form.querySelector('input[name="nombre"]').value = nombre || '';
             form.querySelector('input[name="correo"]').value = correo || '';
-            form.querySelector('input[name="password"]').value = password || '';
+            form.querySelector('input[name="password"]').value = existingPassword  || '';
 
+            passwordInput.required = false;
+            repeatPasswordInput.required = false;
+
+            const passwordField = document.getElementById('content-password');
+            if (passwordField) {
+                const label = passwordField.querySelector('label');
+                if (label) {
+                    label.textContent = 'Nueva Contraseña';
+                }
+            }
         } else {
             saveModal.querySelector('.modal-title').textContent = 'Agregar Administrador';
+            const passwordField = document.getElementById('content-password');
+
+             passwordInput.required = true;
+            repeatPasswordInput.required = true;
+            if (passwordField) {
+                const label = passwordField.querySelector('label');
+                if (label) {
+                    label.textContent = 'Contraseña';
+                }
+            }
             // form.querySelector('input[name="id_admin"]');
             // const passwordField = document.getElementById('content-password');
             // if (passwordField) {
@@ -179,6 +303,7 @@
             // }
             form.action = storeUrl;
         }
+        validatePasswords();
     });
 </script>
 

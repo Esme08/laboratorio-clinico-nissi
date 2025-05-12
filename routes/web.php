@@ -43,9 +43,9 @@ Route::middleware('checkAdminSession')->group(function() {
     Route::get('/dashboard/info', [ClinicaController::class, 'edit'])->name('clinica.info');
     Route::post('/dashboard/info/save', [ClinicaController::class, 'saveInfoClinica'])->name('admin.clinica.guardar');
     Route::delete('/dashboard/info/imagenes/{id}/eliminar', [ClinicaController::class, 'destroyImagen'])->name('admin.clinica.imagenes.eliminar');
-
+    Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
 });
 
 Route::post('/login', [AuthController::class, 'login']);
-Route::get('/logout', [AuthController::class, 'logout'])->name('logout');
+

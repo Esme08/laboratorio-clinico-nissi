@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Models\Cita;
 use App\Models\Servicio;
+use App\Models\Clinica;
 use Illuminate\Support\Facades\Log;
 
 class CitaController extends Controller
@@ -13,7 +14,12 @@ class CitaController extends Controller
     public function create()
     {
         $servicios = Servicio::with('categoria')->where('desactivar', 0)->get();
-        return view('formcita', compact('servicios'));
+        $clinica = Clinica::with('imagenes')->first();
+        if (!$clinica) {
+            $clinica = new Clinica();
+            $clinica->imagenes = collect();
+        }
+        return view('formcita', compact('servicios' , 'clinica'));
     }
 
     public function obtenerHorasDisponibles(Request $request)

@@ -66,7 +66,7 @@ class DashBoard extends Controller
 
     public function indexUsuarios(Request $request)
     {
-        $usuarios = Administrador::where('estado', 'activo')->paginate(10);
+        $usuarios = Administrador::where('estado', 'activo')->select('id_admin', 'nombre', 'correo', 'estado')->paginate(10);
         return view('admin_usuarios', ['usuarios' => $usuarios]);
     }
 
@@ -160,7 +160,7 @@ class DashBoard extends Controller
         $servicio = Servicio::find($id);
         $servicio->desactivar = 1;
         $servicio->save();
-        return redirect()->back()->with('success', 'Servicio eliminado correctamente');
+        return redirect()->back()->with('success', 'Servicio desactivado correctamente');
     }
 
     public function activarServicio(Request $request)
