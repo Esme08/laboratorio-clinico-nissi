@@ -221,7 +221,7 @@ class DashBoard extends Controller
         $correo = $request->correo;
         // dd($correo);
         Resend::emails()->send([
-            'from' => 'Acme <onboarding@resend.dev>',
+            'from' => 'Laboratorio Nissi <info@laboratorionissi.tech>',
             'to' => [$correo],
             'subject' => 'Resultados de su cita en Laboratorio Clínico Nissi',
             'text' => 'Estimado(a) paciente, adjuntamos los resultados de su cita realizada en Laboratorio Clínico Nissi. Gracias por confiar en nosotros.',
