@@ -26,9 +26,8 @@ Route::middleware('checkAdminExists')->group(function() {
 
 Route::middleware('checkAdminSession')->group(function() {
 
-    Route::get('/dashboard', [DashBoard::class, 'index'])->name('dashboard');
+    Route::get('/dashboard/citas', [DashBoard::class, 'index'])->name('dashboard');
     Route::post('/dashboard/send-email', [DashBoard::class, 'sendEmail'])->name('send.email');
-    Route::get('/dashboard/citas', [DashBoard::class, 'filterCita'])->name('citas.filter');
     Route::put('/dashboard/citas/actualizar-estado', [DashBoard::class, 'updateEstadoCita'])->name('cita.updateEstado');
     Route::get('/dashboard/admin-servicios', [DashBoard::class, 'indexServicio'])->name('admin.servicios');
     Route::post('/dashboard/servicios/store', [DashBoard::class, 'storeServicio'])->name('servicio.store');

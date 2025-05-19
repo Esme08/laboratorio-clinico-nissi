@@ -7,6 +7,7 @@ use App\Models\Administrador;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Session;
+use App\Models\Clinica;
 
 class AuthController extends Controller
 {
@@ -16,12 +17,18 @@ class AuthController extends Controller
 
             return redirect()->route('dashboard'); // Si ya hay sesión, redirige al dashboard
         }
-        $adminExist = Administrador::whereNotNull('id_admin')->exists();
+        $adminExist = Administrador::whereNotNull('id_admin')->where('estado', 'activo')->exists();
+        $clinica = Clinica::first();
+        if (!$clinica) {
+            $clinica = new Clinica();
+            $clinica->imagenes = collect();
+        }
         if ($adminExist) {
             // Si ya existe un administrador, redirige al login
-            return view('login');
+            return view('login', ['clinica' => $clinica]);
         }
-        return view('create_admin');
+
+        return view('create_admin', ['clinica' => $clinica]);
     }
 
     public function createAdmin(Request $request){
@@ -35,6 +42,7 @@ class AuthController extends Controller
         $admin->nombre = $request->nombre;
         $admin->correo = $request->correo;
         $admin->contraseña = Hash::make($request->password);
+
 
         $admin->save();
         return redirect()->route('login')->with('success', 'Administrador creado exitosamente. Ahora puedes iniciar sesión.');

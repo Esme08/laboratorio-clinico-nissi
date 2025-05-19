@@ -23,7 +23,7 @@
         <div class="container">
             <a class="navbar-brand d-flex align-items-center gap-2" href="/dashboard" style="font-size: 1.2rem; font-weight: bold; color: #155724;">
                 <img src="{{ asset('imagenes/farmacia.png') }}" alt="Logo" width="40" height="40" class="d-inline-block align-text-top rounded-circle border border-dark">
-                <span>Laboratorio Clinico Nissi</span>
+                <span>{{$clinica->nombre}}</span>
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
@@ -76,7 +76,7 @@
 <main>
     <div class="container">
         <div class="text-center mt-4">
-            <h1 class="text-success fw-bold">Bienvenido a Laboratorio Clínico Nissi</h1>
+            <h1 class="text-success fw-bold">Bienvenido a {{$clinica->nombre}}</h1>
             <h2 class="text-success fw-bold">Administrar Servicios</h2>
         </div>
         @if (session('success'))
@@ -130,7 +130,7 @@
                         <td>{{ $servicio->descripcion }}</td>
                         <td>${{$servicio->precio}}</td>
                         <td>{{ $servicio->categoria->nombre }}</td>
-                        <td class="d-flex justify-content-center gap-2">
+                        <td scope="row" class="d-flex justify-content-center gap-2">
                             <button type="button" class="btn btn-outline-primary btn-subir"
                                     data-bs-toggle="modal"
                                     data-bs-target="#saveModal"
@@ -224,8 +224,8 @@
 </main>
 
 
-    <footer class="text-center p-3 mt-4" style="background-color: #b5e8c3;">
-        <p>&copy; 2025 Laboratorio Clinico Nissi. Todos los derechos reservados.</p>
+     <footer class="text-center p-3 mt-4" style="background-color: #b5e8c3;">
+        <p>&copy; 2025 {{$clinica->nombre}}. Todos los derechos reservados.</p>
         <p>"Tu salud es nuestra prioridad, confía en nosotros para obtener un diagnóstico preciso."</p>
         <img src="{{ asset('imagenes/farmacia.png') }}" alt="Logo" width="30" height="30" class="d-inline-block align-text-top">
     </footer>

@@ -10,6 +10,7 @@ use App\Models\CategoriaServicio;
 use Resend\Laravel\Facades\Resend;
 use App\Mail\OrderShipped;
 use Carbon\Carbon;
+use App\Models\Clinica;
 class DashBoard extends Controller
 {
 
@@ -31,9 +32,14 @@ class DashBoard extends Controller
                 break;
         }
         $citas = Cita::with('servicios')->whereDate('fecha', $fecha)->paginate(10);
+        $clinica = Clinica::first();
+        if (!$clinica) {
+            $clinica = new Clinica();
+            $clinica->imagenes = collect();
+        }
         // Pasar las citas filtradas a la vista
         // dd($citas);
-        return view('dashboard', ['citas' => $citas, 'tiempo' => $tiempo]);
+        return view('dashboard', ['citas' => $citas, 'tiempo' => $tiempo, 'clinica' => $clinica]);
     }
 
     public function updateEstadoCita(Request $request)
@@ -50,6 +56,11 @@ class DashBoard extends Controller
 
         $estado_servicio = $request->query('estado'); // Obtener el valor del filtro
         $categorias = CategoriaServicio::all();
+        $clinica = Clinica::first();
+        if (!$clinica) {
+            $clinica = new Clinica();
+            $clinica->imagenes = collect();
+        }
         $estado = "activados";
         switch ($estado_servicio){
             case 'desactivados':
@@ -61,13 +72,21 @@ class DashBoard extends Controller
                 break;
         }
         //dd($servicios);
-        return view('admin_servicios', ['servicios' => $servicios, 'categorias' => $categorias, 'estado' => $estado]);
+        return view('admin_servicios', ['servicios' => $servicios, 'categorias' => $categorias, 'estado' => $estado, 'clinica' => $clinica]);
     }
 
     public function indexUsuarios(Request $request)
     {
-        $usuarios = Administrador::where('estado', 'activo')->select('id_admin', 'nombre', 'correo', 'estado')->paginate(10);
-        return view('admin_usuarios', ['usuarios' => $usuarios]);
+        $usuarios = Administrador::where('estado', 'activo')
+            ->select('id_admin', 'nombre', 'correo', 'estado')
+            ->orderBy('id_admin', 'asc')
+            ->paginate(10);
+        $clinica = Clinica::first();
+        if (!$clinica) {
+            $clinica = new Clinica();
+            $clinica->imagenes = collect();
+        }
+        return view('admin_usuarios', ['usuarios' => $usuarios, 'clinica' => $clinica]);
     }
 
     public function storeUsuario(Request $request)
@@ -136,8 +155,13 @@ class DashBoard extends Controller
         $citas = $fecha
         ? Cita::whereDate('fecha', '>=', $fecha)->paginate(10)
         : Cita::paginate(10);
+        $clinica = Clinica::first();
+        if (!$clinica) {
+            $clinica = new Clinica();
+            $clinica->imagenes = collect();
+        }
 
-        return view('historial', ['citas' => $citas, 'tiempo' => $tiempo]);
+        return view('historial', ['citas' => $citas, 'tiempo' => $tiempo, 'clinica' => $clinica]);
     }
 
     public function storeServicio(Request $request)
@@ -199,8 +223,8 @@ class DashBoard extends Controller
         Resend::emails()->send([
             'from' => 'Acme <onboarding@resend.dev>',
             'to' => [$correo],
-            'subject' => 'Resultados de la cita',
-            'text' => '¡Hola! Aquí están los resultados de su cita.',
+            'subject' => 'Resultados de su cita en Laboratorio Clínico Nissi',
+            'text' => 'Estimado(a) paciente, adjuntamos los resultados de su cita realizada en Laboratorio Clínico Nissi. Gracias por confiar en nosotros.',
             'attachments' => [
                 [
                     'content' => base64_encode(file_get_contents($file->getRealPath())),  // Convertir el archivo a base64
@@ -209,6 +233,6 @@ class DashBoard extends Controller
                 ]
             ],
         ]);
-        return redirect()->back()->with('success', 'Email sent successfully!');
+        return redirect()->back()->with('success', 'Resultados enviados correctamente');
     }
 }

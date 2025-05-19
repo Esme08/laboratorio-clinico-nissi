@@ -22,7 +22,7 @@
         <div class="container">
             <a class="navbar-brand d-flex align-items-center gap-2" href="/dashboard" style="font-size: 1.2rem; font-weight: bold; color: #155724;">
                 <img src="{{ asset('imagenes/farmacia.png') }}" alt="Logo" width="40" height="40" class="d-inline-block align-text-top rounded-circle border border-dark">
-                <span>Laboratorio Clinico Nissi</span>
+                <span>{{$clinica->nombre}}</span>
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
@@ -75,9 +75,23 @@
 <main>
     <div class="container">
         <div class="text-center mt-4">
-            <h1 class="text-success fw-bold">Bienvenido a Laboratorio Clínico Nissi</h1>
+            <h1 class="text-success fw-bold">Bienvenido a {{$clinica->nombre}}</h1>
             <h2 class="text-success fw-bold">Gestión de Citas</h2>
         </div>
+        @if (session('success'))
+            <div id="success-alert" class="alert alert-success fw-bold text-success">{{ session('success') }}</div>
+            <script>
+            setTimeout(() => {
+                const alert = document.getElementById('success-alert');
+                if (alert) {
+                alert.style.transition = 'opacity 0.5s';
+                alert.style.opacity = '0';
+                setTimeout(() => alert.remove(), 500);
+                }
+            }, 5000);
+            </script>
+        @endif
+
         <div class="text-start mb-4">
             <form id="form-citas" action="{{ route('dashboard') }}" method="GET" >
             @csrf
@@ -123,14 +137,14 @@
                                 </select>
                             </form>
                         </td>
-                        <td>
-                            @if($cita->correo_cliente)
-                                <div class="d-flex justify-content-center">
-                                    <button type="button" class="btn btn-success btn-sm btn-subir d-flex align-items-center gap-1" data-bs-toggle="modal" data-bs-target="#uploadModal">
-                                        <i class="bi bi-upload"></i> Subir Archivo
-                                    </button>
-                                </div>
-                            @endif
+                        <td >
+                         @if($cita->correo_cliente)
+                            <div class="d-flex justify-content-center">
+                                <button type="button" class="btn btn-success btn-sm btn-subir d-flex align-items-center gap-1" data-bs-toggle="modal" data-bs-target="#uploadModal" data-correo="{{ $cita->correo_cliente }}">
+                                    <i class="bi bi-envelope"></i> Enviar Correo
+                                </button>
+                            </div>
+                        @endif
                         </td>
                     </tr>
                     <tr class="detalle" style="display: none;">
@@ -208,8 +222,8 @@
 </div>
 </main>
 
-    <footer class="text-center p-3 mt-4" style="background-color: #b5e8c3;">
-        <p>&copy; 2025 Laboratorio Clinico Nissi. Todos los derechos reservados.</p>
+   <footer class="text-center p-3 mt-4" style="background-color: #b5e8c3;">
+        <p>&copy; 2025 {{$clinica->nombre}}. Todos los derechos reservados.</p>
         <p>"Tu salud es nuestra prioridad, confía en nosotros para obtener un diagnóstico preciso."</p>
         <img src="{{ asset('imagenes/farmacia.png') }}" alt="Logo" width="30" height="30" class="d-inline-block align-text-top">
     </footer>
@@ -217,12 +231,23 @@
         document.querySelectorAll('.fila').forEach((row, index) => {
             row.addEventListener('click', function (event) {
                 // Evitar que el clic en el botón active la fila
-                if (event.target.closest('.btn-subir') || event.target.closest('.select-estado')) {
+                if (event.target.closest('.btn-subir') || event.target.closest('.select-estado') || event.target.closest('.btn-whatsapp')) {
                     return;
                 }
                 let detalleRow = document.querySelectorAll('.detalle')[index];
                 detalleRow.style.display = detalleRow.style.display === 'none' ? 'table-row' : 'none';
+
             });
+        });
+    </script>
+    <script>
+        const uploadModal = document.getElementById('uploadModal');
+
+        uploadModal.addEventListener('show.bs.modal', function (event) {
+            const button = event.relatedTarget;
+            const correo = button.getAttribute('data-correo');
+            const modalBodyInput = document.getElementById('patientEmail');
+            modalBodyInput.value = correo;
         });
     </script>
 

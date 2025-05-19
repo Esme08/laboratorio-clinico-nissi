@@ -18,14 +18,14 @@
 
     <div class="login-container">
         <h3><strong>Bienvenido</strong></h3>
-        <h4>Laboratorio Clínico Nisii</h4>
+        <h4>{{$clinica->nombre}}</h4>
         <div class="icon-user">
          <img src="/imagenes/perfil_icon.png" alt="Imagen" style="width: 100px; height: 100px;">
         </div>
         <form action="{{ route('login') }}" method="POST">
             @csrf
             <div class="mb-3 text-start">
-                <label for="usuario" class="form-label">Usuario</label>
+                <label for="correo" class="form-label">Correo electronico</label>
                 <input type="email" class="form-control" id="correo" name="correo" required>
             </div>
             <div class="mb-3 text-start">

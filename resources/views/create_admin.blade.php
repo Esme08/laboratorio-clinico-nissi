@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login - Laboratorio</title>
+    <title>Crear Administrador - Laboratorio</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="{{ asset('css/app.css') }}">
 
@@ -18,7 +18,7 @@
 
     <div class="login-container">
         <h3><strong>Bienvenido</strong></h3>
-        <h4>Laboratorio Clínico Nisii</h4>
+        <h4>{{$clinica->nombre}}</h4>
         <div class="icon-user">
          <img src="/imagenes/perfil_icon.png" alt="Imagen" style="width: 100px; height: 100px;">
         </div>
@@ -29,7 +29,7 @@
                 <input type="text" class="form-control" id="nombre" name="nombre" required>
             </div>
             <div class="mb-3 text-start">
-                <label for="correo" class="form-label">Correo</label>
+                <label for="correo" class="form-label">Correo electronico</label>
                 <input type="email" class="form-control" id="correo" name="correo" required>
             </div>
             <div class="mb-3 text-start">
