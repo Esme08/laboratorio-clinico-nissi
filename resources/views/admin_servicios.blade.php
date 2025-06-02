@@ -21,7 +21,7 @@
 <nav class="navbar navbar-expand-lg " style="background-color: #b5e8c3;">
 
         <div class="container">
-            <a class="navbar-brand d-flex align-items-center gap-2" href="/dashboard" style="font-size: 1.2rem; font-weight: bold; color: #155724;">
+            <a class="navbar-brand d-flex align-items-center gap-2" href="/dashboard/citas" style="font-size: 1.2rem; font-weight: bold; color: #155724;">
                 <img src="{{ asset('imagenes/farmacia.png') }}" alt="Logo" width="40" height="40" class="d-inline-block align-text-top rounded-circle border border-dark">
                 <span>{{$clinica->nombre}}</span>
             </a>
