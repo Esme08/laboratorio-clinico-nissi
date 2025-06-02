@@ -271,7 +271,7 @@
 
             form.querySelector('input[name="id_servicio"]').value = id || '';
             form.querySelector('input[name="nombre"]').value = nombre || '';
-            form.querySelector('input[name="descripcion"]').value = descripcion || '';
+            form.querySelector('textarea[name="descripcion"]').value = descripcion || '';
             form.querySelector('input[name="precio"]').value = precio || '';
 
             const selectCategoria = form.querySelector('select[name="id_categoria"]');

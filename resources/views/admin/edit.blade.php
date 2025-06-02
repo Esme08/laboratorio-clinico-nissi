@@ -93,19 +93,19 @@
 
                 <div class="mb-4">
                     <label for="descripcion" class="form-label fw-bold text-success">Descripción</label>
-                    <textarea class="form-control shadow-sm border-success" id="descripcion" name="descripcion" rows="4">{{ $clinica->descripcion }}</textarea>
+                    <textarea class="form-control shadow-sm border-success" id="descripcion" name="descripcion" rows="4" required>{{ $clinica->descripcion }}</textarea>
                     @error('descripcion') <div class="text-danger mt-1">{{ $message }}</div> @enderror
                 </div>
 
                 <div class="mb-4">
                     <label for="ubicacion_google_maps" class="form-label fw-bold text-success">Ubicación Google Maps (URL)</label>
-                    <input type="url" class="form-control shadow-sm border-success" id="ubicacion_google_maps" name="ubicacion_google_maps" value="{{ $clinica->ubicacion_google_maps }}">
+                    <input type="url" class="form-control shadow-sm border-success" id="ubicacion_google_maps" name="ubicacion_google_maps" value="{{ $clinica->ubicacion_google_maps }}" required>
                     @error('ubicacion_google_maps') <div class="text-danger mt-1">{{ $message }}</div> @enderror
                 </div>
 
                 <div class="mb-4">
                     <label for="contacto" class="form-label fw-bold text-success">Contacto</label>
-                    <input type="text" class="form-control shadow-sm border-success" id="contacto" name="contacto" value="{{ $clinica->contacto }}">
+                    <input type="text" class="form-control shadow-sm border-success" id="contacto" name="contacto" value="{{ $clinica->contacto }}" required>
                     @error('contacto') <div class="text-danger mt-1">{{ $message }}</div> @enderror
                 </div>
 
